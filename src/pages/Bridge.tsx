@@ -3,7 +3,6 @@ import { Grid as BridgeIcon, ArrowRight, Clock, AlertCircle } from 'lucide-react
 import { SUPPORTED_CHAINS } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
 import { useBridgeContract, BridgeStatus } from '../hooks/useBridgeContract'
-import { useDexContract } from '../hooks/useDexContract'
 
 const Bridge: React.FC = () => {
   const { isConnected, account, chainId } = useWallet()
@@ -106,20 +105,6 @@ const Bridge: React.FC = () => {
       alert('Bridge transaction failed. Please try again.')
     } finally {
       setIsBridging(false)
-    }
-  }
-
-  const getStatusColor = (status: BridgeStatus) => {
-    switch (status) {
-      case BridgeStatus.Completed:
-        return 'bg-green-500'
-      case BridgeStatus.Pending:
-      case BridgeStatus.Locked:
-        return 'bg-yellow-500'
-      case BridgeStatus.Failed:
-        return 'bg-red-500'
-      default:
-        return 'bg-gray-500'
     }
   }
 
