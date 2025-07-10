@@ -162,7 +162,8 @@ const Bridge: React.FC = () => {
               onChange={(e) => setSelectedToken(e.target.value)}
               className="input-field mb-4"
             >
-              <option value="0xA0b86a33E6441b8C4505B6B8C0E4F7c4E4B8C4F5">USDC</option>
+              <option value="">Select a token</option>
+              <option value="0xA0b86a33E6441b8C4CAad45bAeF941aBc7d3Ab32">USDC</option>
               <option value="0xdAC17F958D2ee523a2206206994597C13D831ec7">USDT</option>
               <option value="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2">WETH</option>
             </select>

@@ -51,8 +51,8 @@ const AdminPanel: React.FC = () => {
     if (!bridgeContract || !newRelayer) return
     
     try {
-      // This would call the contract's addRelayer function
-      console.log('Adding relayer:', newRelayer)
+      const tx = await bridgeContract.addRelayer(newRelayer)
+      await tx.wait()
       alert('Relayer added successfully!')
       setNewRelayer('')
     } catch (error) {

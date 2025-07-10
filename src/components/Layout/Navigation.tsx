@@ -17,6 +17,9 @@ const Navigation: React.FC = () => {
   // Mock admin check - replace with actual owner verification
   const isAdmin = account === '0x...' // Replace with actual admin check
 
+  // TODO: Replace with actual contract owner check
+  // const isAdmin = account && account.toLowerCase() === CONTRACT_OWNER_ADDRESS.toLowerCase()
+
   return (
     <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4">

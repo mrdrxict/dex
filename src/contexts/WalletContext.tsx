@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 
+// Extend Window interface for TypeScript
+declare global {
+  interface Window {
+    ethereum?: any
+  }
+}
+
 interface WalletContextType {
   account: string | null
   chainId: number | null

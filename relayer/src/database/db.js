@@ -1,10 +1,9 @@
-import sqlite3 from 'sqlite3';
-import { promisify } from 'util';
+import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 import logger from '../utils/logger.js';
 
-class Database {
+class DatabaseManager {
   constructor() {
     this.db = null;
     this.dbPath = process.env.DATABASE_PATH || './data/relayer.db';
@@ -18,12 +17,7 @@ class Database {
         fs.mkdirSync(dataDir, { recursive: true });
       }
 
-      this.db = new sqlite3.Database(this.dbPath);
-      
-      // Promisify database methods
-      this.db.run = promisify(this.db.run.bind(this.db));
-      this.db.get = promisify(this.db.get.bind(this.db));
-      this.db.all = promisify(this.db.all.bind(this.db));
+      this.db = new Database(this.dbPath);
 
       await this.createTables();
       logger.info('Database initialized successfully');
@@ -34,7 +28,7 @@ class Database {
   }
 
   async createTables() {
-    const createBridgeEventsTable = `
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS bridge_events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tx_id TEXT UNIQUE NOT NULL,
@@ -54,9 +48,9 @@ class Database {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
-    `;
+    `);
 
-    const createProcessedBlocksTable = `
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS processed_blocks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         chain_id INTEGER NOT NULL,
@@ -64,9 +58,9 @@ class Database {
         processed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(chain_id, block_number)
       )
-    `;
+    `);
 
-    const createRelayerStatsTable = `
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS relayer_stats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT NOT NULL,
@@ -77,16 +71,12 @@ class Database {
         total_volume TEXT DEFAULT '0',
         UNIQUE(date, chain_id)
       )
-    `;
-
-    await this.db.run(createBridgeEventsTable);
-    await this.db.run(createProcessedBlocksTable);
-    await this.db.run(createRelayerStatsTable);
+    `);
 
     // Create indexes for better performance
-    await this.db.run('CREATE INDEX IF NOT EXISTS idx_bridge_events_status ON bridge_events(status)');
-    await this.db.run('CREATE INDEX IF NOT EXISTS idx_bridge_events_chains ON bridge_events(source_chain, target_chain)');
-    await this.db.run('CREATE INDEX IF NOT EXISTS idx_processed_blocks_chain ON processed_blocks(chain_id)');
+    this.db.exec('CREATE INDEX IF NOT EXISTS idx_bridge_events_status ON bridge_events(status)');
+    this.db.exec('CREATE INDEX IF NOT EXISTS idx_bridge_events_chains ON bridge_events(source_chain, target_chain)');
+    this.db.exec('CREATE INDEX IF NOT EXISTS idx_processed_blocks_chain ON processed_blocks(chain_id)');
   }
 
   async saveBridgeEvent(eventData) {
@@ -111,7 +101,7 @@ class Database {
       eventData.confirmations || 0
     ];
 
-    await this.db.run(query, params);
+    this.db.prepare(query).run(params);
     logger.info(`Bridge event saved: ${eventData.txId}`);
   }
 
@@ -122,7 +112,7 @@ class Database {
       WHERE tx_id = ?
     `;
 
-    await this.db.run(query, [status, relayTxHash, errorMessage, txId]);
+    this.db.prepare(query).run([status, relayTxHash, errorMessage, txId]);
     logger.info(`Event status updated: ${txId} -> ${status}`);
   }
 
@@ -133,7 +123,7 @@ class Database {
       WHERE tx_id = ?
     `;
 
-    await this.db.run(query, [confirmations, txId]);
+    this.db.prepare(query).run([confirmations, txId]);
   }
 
   async getPendingEvents() {
@@ -143,12 +133,12 @@ class Database {
       ORDER BY created_at ASC
     `;
 
-    return await this.db.all(query);
+    return this.db.prepare(query).all();
   }
 
   async getEventByTxId(txId) {
     const query = 'SELECT * FROM bridge_events WHERE tx_id = ?';
-    return await this.db.get(query, [txId]);
+    return this.db.prepare(query).get([txId]);
   }
 
   async isEventProcessed(txId) {
@@ -162,7 +152,7 @@ class Database {
       VALUES (?, ?)
     `;
 
-    await this.db.run(query, [chainId, blockNumber]);
+    this.db.prepare(query).run([chainId, blockNumber]);
   }
 
   async getLastProcessedBlock(chainId) {
@@ -172,7 +162,7 @@ class Database {
       WHERE chain_id = ?
     `;
 
-    const result = await this.db.get(query, [chainId]);
+    const result = this.db.prepare(query).get([chainId]);
     return result?.block_number || 0;
   }
 
@@ -190,7 +180,7 @@ class Database {
       GROUP BY source_chain, target_chain
     `;
 
-    return await this.db.all(query, [days]);
+    return this.db.prepare(query).all([days]);
   }
 
   async getRecentEvents(limit = 50) {
@@ -200,7 +190,7 @@ class Database {
       LIMIT ?
     `;
 
-    return await this.db.all(query, [limit]);
+    return this.db.prepare(query).all([limit]);
   }
 
   async close() {
@@ -213,4 +203,4 @@ class Database {
   }
 }
 
-export default new Database();
+export default new DatabaseManager();

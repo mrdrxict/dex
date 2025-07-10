@@ -75,8 +75,10 @@ const Pools: React.FC = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Liquidity Pools</h1>
-        <button className="btn-primary flex items-center space-x-2">
+        <button 
           onClick={() => setShowAddLiquidity(true)}
+          className="btn-primary flex items-center space-x-2"
+        >
           <Plus className="w-4 h-4" />
           <span>Add Liquidity</span>
         </button>

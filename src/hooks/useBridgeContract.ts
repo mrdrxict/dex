@@ -4,6 +4,14 @@ import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
 
 const BRIDGE_ABI = [
+  'function owner() external view returns (address)',
+  'function addSupportedToken(address token, uint256 chainId, bool isNative, uint256 minAmount, uint256 maxAmount, uint256 fee) external',
+  'function addRelayer(address relayer) external',
+  'function removeRelayer(address relayer) external',
+  'function setBridgeFee(uint256 fee) external',
+  'function setFeeCollector(address feeCollector) external',
+  'function pause() external',
+  'function unpause() external',
   'function lockTokens(address token, uint256 amount, uint256 targetChain, address targetAddress) external payable returns (bytes32 txId)',
   'function releaseTokens(bytes32 txId) external',
   'function burnAndBridge(address token, uint256 amount, uint256 targetChain, address targetAddress) external returns (bytes32 txId)',

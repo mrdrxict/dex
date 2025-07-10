@@ -19,12 +19,12 @@ export const TOKENS: Record<number, Token[]> = {
       logoURI: 'https://tokens.1inch.io/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png'
     },
     {
-      address: '0xA0b86a33E6441b8C4505B6B8C0E4F7c4E4B8C4F5',
+      address: '0xA0b86a33E6441b8C4CAad45bAeF941aBc7d3Ab32',
       symbol: 'USDC',
       name: 'USD Coin',
       decimals: 6,
       chainId: 1,
-      logoURI: 'https://tokens.1inch.io/0xa0b86a33e6441b8c4505b6b8c0e4f7c4e4b8c4f5.png'
+      logoURI: 'https://tokens.1inch.io/0xa0b86a33e6441b8c4caad45baef941abc7d3ab32.png'
     },
     {
       address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',

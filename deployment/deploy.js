@@ -4,45 +4,46 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   
   console.log('Deploying contracts with the account:', deployer.address)
-  console.log('Account balance:', (await deployer.getBalance()).toString())
+  console.log('Account balance:', (await deployer.provider.getBalance(deployer.address)).toString())
 
   // Deploy WETH first (if not using existing)
   const WETH = await ethers.getContractFactory('WETH')
   const weth = await WETH.deploy()
-  await weth.deployed()
-  console.log('WETH deployed to:', weth.address)
+  await weth.waitForDeployment()
+  console.log('WETH deployed to:', await weth.getAddress())
 
   // Deploy DexBridge Token
   const DexBridgeToken = await ethers.getContractFactory('DexBridgeToken')
   const dxbToken = await DexBridgeToken.deploy()
-  await dxbToken.deployed()
-  console.log('DexBridge Token deployed to:', dxbToken.address)
+  await dxbToken.waitForDeployment()
+  console.log('DexBridge Token deployed to:', await dxbToken.getAddress())
 
   // Deploy Factory
   const Factory = await ethers.getContractFactory('DexBridgeFactory')
   const factory = await Factory.deploy()
-  await factory.deployed()
-  console.log('Factory deployed to:', factory.address)
+  await factory.waitForDeployment()
+  console.log('Factory deployed to:', await factory.getAddress())
 
   // Deploy Router
   const Router = await ethers.getContractFactory('DexBridgeRouter')
-  const router = await Router.deploy(factory.address, weth.address)
-  await router.deployed()
-  console.log('Router deployed to:', router.address)
+  const router = await Router.deploy(await factory.getAddress(), await weth.getAddress())
+  await router.waitForDeployment()
+  console.log('Router deployed to:', await router.getAddress())
 
   // Deploy Bridge
-  const chainId = await deployer.getChainId()
+  const network = await deployer.provider.getNetwork()
+  const chainId = Number(network.chainId)
   const Bridge = await ethers.getContractFactory('DexBridgeCore')
   const bridge = await Bridge.deploy(chainId, deployer.address) // deployer as fee collector
-  await bridge.deployed()
-  console.log('Bridge deployed to:', bridge.address)
+  await bridge.waitForDeployment()
+  console.log('Bridge deployed to:', await bridge.getAddress())
 
   // Add some initial supported tokens to bridge
   console.log('Adding supported tokens to bridge...')
   
   // Add WETH
   await bridge.addSupportedToken(
-    weth.address,
+    await weth.getAddress(),
     chainId,
     true, // is native
     ethers.utils.parseEther('0.001'), // min amount
@@ -52,7 +53,7 @@ async function main() {
   
   // Add DXB Token
   await bridge.addSupportedToken(
-    dxbToken.address,
+    await dxbToken.getAddress(),
     chainId,
     true, // is native
     ethers.utils.parseEther('1'), // min amount
@@ -62,11 +63,11 @@ async function main() {
 
   console.log('Deployment completed!')
   console.log('Contract addresses:')
-  console.log('- Factory:', factory.address)
-  console.log('- Router:', router.address)
-  console.log('- Bridge:', bridge.address)
-  console.log('- DXB Token:', dxbToken.address)
-  console.log('- WETH:', weth.address)
+  console.log('- Factory:', await factory.getAddress())
+  console.log('- Router:', await router.getAddress())
+  console.log('- Bridge:', await bridge.getAddress())
+  console.log('- DXB Token:', await dxbToken.getAddress())
+  console.log('- WETH:', await weth.getAddress())
 }
 
 main()
