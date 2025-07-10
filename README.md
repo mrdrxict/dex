@@ -1,15 +1,15 @@
-# DexBridge - Decentralized Exchange with Cross-Chain Bridge
+# DexBridge - Advanced Decentralized Exchange with Cross-Chain Bridge
 
-A modern, **100% self-contained** decentralized exchange (DEX) built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
+A comprehensive, **100% self-contained** decentralized exchange (DEX) ecosystem built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, ESR staking, LP farming, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
 
-## 🌟 Features
+## 🌟 Core Features
 
-### Core DEX Functionality
-- **Custom DEX Contracts**: Our own Factory.sol, Router.sol, and Pair.sol (Uniswap V2-style)
-- **Token Swapping**: Swap tokens using our proprietary routing system
+### Advanced DEX Functionality
+- **Custom DEX Contracts**: Proprietary Factory.sol, Router.sol, and Pair.sol (Uniswap V2-style)
+- **Token Swapping**: Swap tokens using our proprietary routing system with $3 USDT fees
 - **Liquidity Pools**: Create and manage liquidity pools within our ecosystem
-- **Multi-Chain Deployment**: Deploy on Ethereum, BSC, Polygon, and Arbitrum
-- **Real-time Pricing**: AMM-based pricing with slippage protection
+- **Multi-Chain Deployment**: Deploy on Ethereum, BSC, Polygon, Arbitrum, and ESR Testnet
+- **Real-time Pricing**: AMM-based pricing with configurable slippage protection
 - **LP Token Management**: Mint and burn LP tokens for liquidity providers
 
 ### Cross-Chain Bridge
@@ -19,13 +19,38 @@ A modern, **100% self-contained** decentralized exchange (DEX) built with React,
 - **Token Locking**: Lock tokens on source chain, mint on destination
 - **Burn & Release**: Burn wrapped tokens, release native tokens
 - **Bridge Dashboard**: Real-time transaction tracking and history
+- **$3 USDT Bridge Fees**: All bridge transactions require $3 USDT fee
+
+### ESR Staking System
+- **ESR Token Staking**: Stake minimum 100 ESR tokens with 7-day lock period
+- **USDT Rewards**: Earn USDT rewards from $3 fees collected on swaps and bridges
+- **Proportional Distribution**: Rewards distributed based on stake weight
+- **Real-time APR**: Dynamic APR calculation based on fee collection
+- **Flexible Claims**: Claim rewards anytime after distribution
+- **Staking Dashboard**: Comprehensive staking statistics and user info
+
+### LP Farming Platform
+- **Multiple Farming Pools**: Support for various LP token pairs
+- **ESR Emissions**: Earn ESR tokens for providing liquidity
+- **Configurable Rewards**: Admin-controlled emission rates and pool weights
+- **Auto-Compounding**: Harvest rewards and reinvest automatically
+- **Pool Management**: Add, pause, and configure farming pools
+- **Farming Analytics**: Track TVL, APR, and farming statistics
+
+### Fee Collection & Distribution System
+- **$3 USDT Fees**: All swaps and bridge transactions require $3 USDT
+- **Automatic Collection**: Fees automatically collected and distributed to ESR stakers
+- **Fee Verification**: Smart contract checks for sufficient USDT balance and allowance
+- **Reward Pool**: Accumulated fees distributed proportionally to stakers
+- **Real-time Tracking**: Monitor fee collection and distribution in real-time
 
 ### Advanced Features
-- **Admin Panel**: Manage supported tokens, relayers, and bridge settings
-- **Analytics Dashboard**: Track TVL, volume, and trading metrics
-- **Rewards System**: Staking and farming with our DXB token
-- **Professional UI**: Dark/light mode with responsive design
-- **Wallet Integration**: MetaMask and Web3 wallet support
+- **Admin Panel**: Comprehensive management for tokens, relayers, and bridge settings
+- **Reward Management**: Admin controls for staking and farming parameters
+- **Analytics Dashboard**: Track TVL, volume, trading metrics, and fee collection
+- **Professional UI**: Dark/light mode with responsive design and micro-interactions
+- **Wallet Integration**: MetaMask and Web3 wallet support with chain switching
+- **ESR Testnet Support**: Full integration with ESR blockchain testnet
 
 ## 🚀 Quick Start
 
@@ -84,6 +109,7 @@ VITE_ETHEREUM_RPC_URL=https://mainnet.infura.io/v3/YOUR_INFURA_KEY
 VITE_BSC_RPC_URL=https://bsc-dataseed.binance.org
 VITE_POLYGON_RPC_URL=https://polygon-rpc.com
 VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
+VITE_ESR_RPC_URL=https://testnet.rpc.esrscan.com
 ```
 
 ## 🏗️ Smart Contract Architecture
@@ -96,10 +122,11 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
 - Emits PairCreated events
 
 #### Router.sol  
-- Handles all user interactions
+- Handles all user interactions with $3 USDT fee collection
 - Manages liquidity operations
-- Executes token swaps
+- Executes token swaps with fee verification
 - Calculates optimal routing paths
+- Integrates with staking contract for fee distribution
 
 #### Pair.sol
 - Individual trading pair contract
@@ -110,21 +137,44 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
 ### Bridge Contracts
 
 #### BridgeCore.sol
-- Main bridge contract for each chain
+- Main bridge contract for each chain with fee collection
 - Handles token locking and releasing
 - Manages supported tokens and fees
 - Controls relayer permissions
+- Collects $3 USDT fees for each bridge transaction
 
 #### DexBridgeWrappedToken.sol
 - Wrapped token contract for non-native assets
 - Mintable/burnable by bridge contract
 - Standard ERC-20 implementation
 
+### Staking & Farming Contracts
+
+#### ESRStaking.sol
+- ESR token staking with 7-day lock period
+- USDT reward distribution from collected fees
+- Proportional reward calculation based on stake weight
+- Real-time APR tracking and reward claims
+- Minimum 100 ESR stake requirement
+
+#### LPFarming.sol
+- Multi-pool LP token farming system
+- ESR token emissions with configurable rates
+- Pool weight management and allocation points
+- Harvest functionality for accumulated rewards
+- Admin controls for pool management
+
+#### FeeManager.sol
+- Centralized fee collection system
+- $3 USDT fee verification and collection
+- Integration with staking contract for reward distribution
+- Fee requirement validation for all operations
+
 ### Token Contracts
 
-#### DexBridgeToken.sol (DXB)
+#### DexBridgeToken.sol (DXB/ESR)
 - Native governance and utility token
-- Used for staking and rewards
+- Used for staking and farming rewards
 - Deflationary tokenomics
 
 #### WETH.sol
@@ -144,6 +194,10 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
    - Use the chain selector to switch between networks
    - Ensure contracts are deployed on selected network
 
+3. **Prepare USDT for Fees**
+   - Ensure you have at least $3 USDT for transaction fees
+   - Approve USDT spending for the router/bridge contracts
+
 ### Token Swapping
 
 1. **Navigate to Swap** (default page)
@@ -151,11 +205,14 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
    - Choose "From" token and amount
    - Select "To" token
    - System calculates output using our AMM
-3. **Execute Swap**
+3. **Configure Settings**
+   - Adjust slippage tolerance (0.1% - 50%)
+   - Review $3 USDT fee requirement
+4. **Execute Swap**
+   - Ensure sufficient USDT balance and approval
    - Approve token spending if needed
    - Click "Swap" button
    - Confirm transaction in wallet
-   - Wait for confirmation
 
 ### Adding Liquidity
 
@@ -176,14 +233,49 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
    - Select source and destination chains
    - Choose token and amount
    - Enter destination address (optional)
-3. **Execute Bridge**
-   - Review bridge fees
+3. **Review Fees**
+   - Bridge fee in tokens
+   - $3 USDT transaction fee
+4. **Execute Bridge**
+   - Ensure sufficient USDT balance and approval
    - Confirm transaction
    - Wait for relayer to process on destination chain
 
+### ESR Staking
+
+1. **Navigate to Stake tab**
+2. **Stake ESR Tokens**
+   - Enter amount (minimum 100 ESR)
+   - Approve ESR spending
+   - Confirm staking transaction
+   - Tokens locked for 7 days
+3. **Earn Rewards**
+   - Rewards distributed from collected fees
+   - Proportional to your stake weight
+   - Claim anytime after distribution
+4. **Unstake Tokens**
+   - Available after 7-day lock period
+   - Partial or full unstaking supported
+
+### LP Farming
+
+1. **Navigate to Farm tab**
+2. **Select Farming Pool**
+   - Choose LP token pair
+   - Review APR and pool details
+3. **Stake LP Tokens**
+   - Enter LP token amount
+   - Approve LP token spending
+   - Confirm staking transaction
+4. **Harvest Rewards**
+   - Claim ESR rewards anytime
+   - Use "Harvest All" for multiple pools
+   - Compound rewards by restaking
+
 ### Admin Functions (Contract Owner Only)
 
-1. **Access Admin Panel** (`/admin`)
+#### Bridge Management (`/admin`)
+1. **Access Admin Panel**
 2. **Manage Supported Tokens**
    - Add new tokens to bridge
    - Set minimum/maximum amounts
@@ -194,6 +286,19 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
 4. **Bridge Settings**
    - Update global fees
    - Pause/unpause bridge
+   - Emergency controls
+
+#### Reward Management (`/admin/rewards`)
+1. **Emission Rate Control**
+   - Adjust ESR emission rate for farming
+   - Real-time rate updates
+2. **LP Pool Management**
+   - Add new farming pools
+   - Adjust pool weights and allocation points
+   - Pause/activate pools
+3. **Staking Oversight**
+   - Monitor staking statistics
+   - Distribute accumulated fees to stakers
    - Emergency controls
 
 ## 🔧 Development & Deployment
@@ -238,19 +343,37 @@ VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
    
    # Arbitrum
    npx hardhat run deployment/deploy.js --network arbitrum
+   
+   # ESR Testnet
+   npx hardhat run deployment/deploy.js --network esr
    ```
 
 3. **Update Frontend**
    - Update contract addresses for each network
    - Deploy frontend to hosting service
 
-### Contract Verification
+### Relayer Service Deployment
 
-After deployment, verify contracts on block explorers:
+1. **Navigate to Relayer Directory**
+   ```bash
+   cd relayer
+   ```
 
-```bash
-npx hardhat verify --network ethereum CONTRACT_ADDRESS
-```
+2. **Configure Environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+3. **Deploy Relayer**
+   ```bash
+   # Using Docker
+   docker-compose up -d
+   
+   # Or directly with Node.js
+   npm install
+   npm start
+   ```
 
 ## 🔐 Security Features
 
@@ -260,18 +383,27 @@ npx hardhat verify --network ethereum CONTRACT_ADDRESS
 - **Pausable**: Emergency pause functionality
 - **Input Validation**: Comprehensive parameter checking
 - **Safe Math**: Overflow protection built-in
+- **Fee Verification**: Ensures proper USDT fee collection
 
 ### Bridge Security
 - **Multi-signature**: Recommended for production relayers
 - **Rate Limiting**: Configurable min/max amounts
 - **Fee Protection**: Prevents excessive fee extraction
 - **Emergency Withdrawal**: Owner can recover stuck funds
+- **Relayer Authorization**: Only authorized relayers can process transactions
+
+### Staking Security
+- **Lock Period Enforcement**: 7-day minimum lock period
+- **Proportional Rewards**: Fair distribution based on stake weight
+- **Reward Verification**: Prevents double claiming
+- **Emergency Functions**: Admin controls for critical situations
 
 ### Frontend Security
 - **Input Sanitization**: All user inputs validated
 - **Transaction Simulation**: Preview before execution
 - **Slippage Protection**: Configurable slippage tolerance
 - **Approval Management**: Precise token approvals
+- **Fee Verification**: Check USDT requirements before transactions
 
 ## 📊 Contract Addresses
 
@@ -283,12 +415,34 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     factory: '0x...', // Your deployed Factory
     router: '0x...',  // Your deployed Router  
     bridge: '0x...',  // Your deployed Bridge
+    staking: '0x...', // Your deployed ESR Staking
+    farming: '0x...', // Your deployed LP Farming
     dxbToken: '0x...', // Your DXB Token
     weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
   }
   // ... other networks
 }
 ```
+
+## 🌐 Supported Networks
+
+- **Ethereum Mainnet** (Chain ID: 1)
+- **BSC Mainnet** (Chain ID: 56)
+- **Polygon Mainnet** (Chain ID: 137)
+- **Arbitrum One** (Chain ID: 42161)
+- **ESR Testnet** (Chain ID: 25062019)
+
+## 💰 Fee Structure
+
+### Transaction Fees
+- **Swap Fee**: $3 USDT per transaction
+- **Bridge Fee**: $3 USDT per transaction + token-specific fees
+- **LP Fees**: 0.3% of swap volume (standard AMM fee)
+
+### Fee Distribution
+- **ESR Stakers**: 100% of $3 USDT fees distributed proportionally
+- **LP Providers**: 0.3% swap fees from trading volume
+- **Farmers**: ESR token emissions for LP staking
 
 ## 🚀 Production Checklist
 
@@ -297,6 +451,8 @@ Before going live:
 - [ ] **Smart Contract Audits**: Get contracts audited by professionals
 - [ ] **Testnet Testing**: Deploy and test on testnets first  
 - [ ] **Multi-sig Setup**: Use multi-signature wallets for admin functions
+- [ ] **Relayer Security**: Secure relayer private keys and infrastructure
+- [ ] **Fee Token Setup**: Ensure USDT contracts are properly configured
 - [ ] **Monitoring**: Set up contract monitoring and alerts
 - [ ] **Documentation**: Update all contract addresses and configurations
 - [ ] **Emergency Procedures**: Establish incident response procedures
@@ -324,6 +480,7 @@ Before going live:
 - **USE MULTI-SIGNATURE** wallets for all admin functions
 - **IMPLEMENT MONITORING** for all contract interactions
 - **HAVE EMERGENCY PROCEDURES** ready for incident response
+- **SECURE RELAYER INFRASTRUCTURE** with proper key management
 
 ### Legal Disclaimer
 This software is provided "as is" without warranty of any kind. Users assume all risks associated with:
@@ -331,6 +488,7 @@ This software is provided "as is" without warranty of any kind. Users assume all
 - Bridge failures or delays  
 - Loss of funds due to bugs or exploits
 - Regulatory compliance in their jurisdiction
+- Fee collection and staking mechanisms
 
 The developers are not responsible for any financial losses, legal issues, or other damages arising from the use of this software.
 
@@ -340,9 +498,36 @@ Users are responsible for ensuring compliance with local laws and regulations re
 - Cross-border financial transfers
 - Tax reporting and obligations
 - KYC/AML requirements where applicable
+- Staking and farming activities
 
 ---
 
 **Built with ❤️ for the DeFi community**
 
-*A truly decentralized, self-contained DEX and bridge solution*
+*A truly decentralized, self-contained DEX and bridge solution with advanced staking and farming capabilities*
+
+## 🎯 Roadmap
+
+### Phase 1 (Current)
+- ✅ Core DEX functionality
+- ✅ Cross-chain bridge
+- ✅ ESR staking system
+- ✅ LP farming platform
+- ✅ Fee collection system
+- ✅ Admin management tools
+
+### Phase 2 (Upcoming)
+- 🔄 Advanced analytics and reporting
+- 🔄 Mobile app development
+- 🔄 Additional chain integrations
+- 🔄 Governance token implementation
+- 🔄 Advanced trading features
+- 🔄 Institutional tools
+
+### Phase 3 (Future)
+- 🔄 Cross-chain governance
+- 🔄 Advanced DeFi integrations
+- 🔄 Layer 2 scaling solutions
+- 🔄 Enterprise partnerships
+- 🔄 Advanced security features
+- 🔄 Global expansion
