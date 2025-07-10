@@ -124,7 +124,7 @@ const Swap: React.FC = () => {
       const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes
       const minAmountOut = (parseFloat(toAmount) * (100 - parseFloat(slippage)) / 100).toString()
       
-      const tx = await swapExactTokensForTokens(fromAmount, minAmountOut, path, deadline)
+      await swapExactTokensForTokens(fromAmount, minAmountOut, path, deadline)
       
       alert('Swap successful!')
       setFromAmount('')
