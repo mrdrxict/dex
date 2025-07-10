@@ -52,35 +52,41 @@ export const useDexContract = () => {
   }>({ factory: null, router: null })
 
   useEffect(() => {
-    if (!provider || !chainId) {
-      setContracts({ factory: null, router: null })
-      return
+    const initializeContracts = async () => {
+      if (!provider || !chainId) {
+        setContracts({ factory: null, router: null })
+        return
+      }
+
+      const addresses = getContractAddresses(chainId)
+      if (!addresses) {
+        setContracts({ factory: null, router: null })
+        return
+      }
+
+      const signer = await provider.getSigner()
+      
+      const factory = new ethers.Contract(addresses.factory, FACTORY_ABI, signer)
+      const router = new ethers.Contract(addresses.router, ROUTER_ABI, signer)
+
+      setContracts({ factory, router })
     }
 
-    const addresses = getContractAddresses(chainId)
-    if (!addresses) {
-      setContracts({ factory: null, router: null })
-      return
-    }
-
-    const signer = provider.getSigner()
-    
-    const factory = new ethers.Contract(addresses.factory, FACTORY_ABI, signer)
-    const router = new ethers.Contract(addresses.router, ROUTER_ABI, signer)
-
-    setContracts({ factory, router })
+    initializeContracts()
   }, [provider, chainId])
 
   const getTokenContract = (tokenAddress: string) => {
     if (!provider) return null
-    const signer = provider.getSigner()
-    return new ethers.Contract(tokenAddress, ERC20_ABI, signer)
+    return provider.getSigner().then(signer => 
+      new ethers.Contract(tokenAddress, ERC20_ABI, signer)
+    )
   }
 
   const getPairContract = (pairAddress: string) => {
     if (!provider) return null
-    const signer = provider.getSigner()
-    return new ethers.Contract(pairAddress, PAIR_ABI, signer)
+    return provider.getSigner().then(signer => 
+      new ethers.Contract(pairAddress, PAIR_ABI, signer)
+    )
   }
 
   const swapExactTokensForTokens = async (
