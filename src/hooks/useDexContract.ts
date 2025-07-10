@@ -181,7 +181,7 @@ export const useDexContract = () => {
   }
 
   const getTokenBalance = async (tokenAddress: string, userAddress?: string) => {
-    const token = getTokenContract(tokenAddress)
+    const token = await getTokenContract(tokenAddress)
     if (!token) throw new Error('Token contract not available')
     
     const address = userAddress || account
@@ -192,7 +192,7 @@ export const useDexContract = () => {
   }
 
   const approveToken = async (tokenAddress: string, spenderAddress: string, amount: string) => {
-    const token = getTokenContract(tokenAddress)
+    const token = await getTokenContract(tokenAddress)
     if (!token) throw new Error('Token contract not available')
     
     const tx = await token.approve(spenderAddress, ethers.parseEther(amount))
@@ -200,7 +200,7 @@ export const useDexContract = () => {
   }
 
   const getTokenAllowance = async (tokenAddress: string, spenderAddress: string) => {
-    const token = getTokenContract(tokenAddress)
+    const token = await getTokenContract(tokenAddress)
     if (!token || !account) throw new Error('Token contract or account not available')
     
     const allowance = await token.allowance(account, spenderAddress)
