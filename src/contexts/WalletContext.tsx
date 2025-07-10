@@ -57,7 +57,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setAccount(accounts[0])
       setChainId(Number(network.chainId))
     } catch (error) {
-      console.error('Failed to connect wallet:', error)
+      // Check if user rejected the connection request
+      if (error.code === 'ACTION_REJECTED' || error.code === 4001) {
+        console.log('Wallet connection cancelled by user')
+      } else {
+        console.error('Failed to connect wallet:', error)
+      }
     } finally {
       setIsConnecting(false)
     }
