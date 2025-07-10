@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Sprout, Plus, TrendingUp, DollarSign, Clock } from 'lucide-react'
+import { Sprout, TrendingUp, DollarSign, Clock } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
 import { useFarmingContract } from '../hooks/useFarmingContract'
 
@@ -57,7 +57,7 @@ const Farm: React.FC = () => {
   const loadPools = async () => {
     try {
       const poolData = await getAllPools()
-      const formattedPools: Pool[] = poolData.lpTokens.map((lpToken, index) => ({
+      const formattedPools: Pool[] = poolData.lpTokens.map((lpToken: string, index: number) => ({
         id: index,
         name: poolData.names[index],
         lpToken,
