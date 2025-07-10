@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ArrowUpDown, Settings, AlertCircle } from 'lucide-react'
+import { ArrowUpDown, Settings, AlertCircle, X } from 'lucide-react'
 import { Token } from '../constants/tokens'
 import { useWallet } from '../contexts/WalletContext'
 import { useDexContract } from '../hooks/useDexContract'
@@ -24,6 +24,8 @@ const Swap: React.FC = () => {
   const [priceImpact, setPriceImpact] = useState('0')
   const [needsApproval, setNeedsApproval] = useState(false)
   const [feeWarning, setFeeWarning] = useState('')
+  const [showSettings, setShowSettings] = useState(false)
+  const [tempSlippage, setTempSlippage] = useState(slippage)
 
   const calculateOutputAmount = async () => {
     if (!fromToken || !toToken || !fromAmount || !contracts.router) return
@@ -135,12 +137,25 @@ const Swap: React.FC = () => {
     }
   }
 
+  const handleSaveSettings = () => {
+    setSlippage(tempSlippage)
+    setShowSettings(false)
+  }
+
+  const handleCancelSettings = () => {
+    setTempSlippage(slippage)
+    setShowSettings(false)
+  }
+
   return (
     <div className="max-w-md mx-auto">
       <div className="card p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">Swap</h2>
-          <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
             <Settings className="w-5 h-5" />
           </button>
         </div>
@@ -233,6 +248,96 @@ const Swap: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="card p-6 max-w-sm w-full mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold">Swap Settings</h3>
+              <button
+                onClick={handleCancelSettings}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  Slippage Tolerance
+                </label>
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  {['0.1', '0.5', '1.0'].map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => setTempSlippage(preset)}
+                      className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                        tempSlippage === preset
+                          ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      {preset}%
+                    </button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder="Custom"
+                    value={tempSlippage}
+                    onChange={(e) => setTempSlippage(e.target.value)}
+                    className="input-field pr-8"
+                    step="0.1"
+                    min="0.1"
+                    max="50"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                    %
+                  </span>
+                </div>
+                {parseFloat(tempSlippage) > 5 && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">
+                    High slippage tolerance may result in unfavorable trades
+                  </p>
+                )}
+                {parseFloat(tempSlippage) < 0.1 && (
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                    Very low slippage may cause transaction failures
+                  </p>
+                )}
+              </div>
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="text-gray-600 dark:text-gray-400">Transaction Fee</span>
+                  <span className="font-medium text-orange-600 dark:text-orange-400">$3 USDT</span>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  This fee is required for all swaps and goes to ESR stakers
+                </p>
+              </div>
+              
+              <div className="flex space-x-3 pt-2">
+                <button
+                  onClick={handleCancelSettings}
+                  className="flex-1 btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveSettings}
+                  className="flex-1 btn-primary"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Transactions */}
       <div className="card p-6 mt-6">
