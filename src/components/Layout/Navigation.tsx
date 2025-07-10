@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { ArrowLeftRight, Droplets, Grid as Bridge, BarChart3, Gift, Shield } from 'lucide-react'
+import { ArrowLeftRight, Droplets, Grid as Bridge, BarChart3, Gift, Sprout, Shield } from 'lucide-react'
 import { useWallet } from '../../contexts/WalletContext'
 
 const Navigation: React.FC = () => {
@@ -11,6 +11,7 @@ const Navigation: React.FC = () => {
     { path: '/pools', label: 'Pools', icon: Droplets },
     { path: '/bridge', label: 'Bridge', icon: Bridge },
     { path: '/stake', label: 'Stake', icon: Gift },
+    { path: '/farm', label: 'Farm', icon: Sprout },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   ]
 

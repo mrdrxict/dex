@@ -63,6 +63,17 @@ async function main() {
   await bridge.setStakingContract(await esrStaking.getAddress())
   console.log('Bridge configured with staking contract')
 
+  // Deploy LP Farming Contract
+  const LPFarming = await ethers.getContractFactory('LPFarming')
+  const lpFarming = await LPFarming.deploy(
+    await dxbToken.getAddress(), // ESR token (using DXB for now)
+    deployer.address, // Reward pool
+    ethers.utils.parseEther('0.1'), // 0.1 ESR per second
+    Math.floor(Date.now() / 1000) // Start time
+  )
+  await lpFarming.waitForDeployment()
+  console.log('LP Farming deployed to:', await lpFarming.getAddress())
+
   // Add some initial supported tokens to bridge
   console.log('Adding supported tokens to bridge...')
   
@@ -92,6 +103,7 @@ async function main() {
   console.log('- Router:', await router.getAddress())
   console.log('- Bridge:', await bridge.getAddress())
   console.log('- ESR Staking:', await esrStaking.getAddress())
+  console.log('- LP Farming:', await lpFarming.getAddress())
   console.log('- DXB Token:', await dxbToken.getAddress())
   console.log('- USDT:', await usdt.getAddress())
   console.log('- WETH:', await weth.getAddress())

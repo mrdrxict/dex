@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Shield, Plus, Settings, Users } from 'lucide-react'
+import { Shield, Plus, Settings, Users, Gift } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useWallet } from '../contexts/WalletContext'
 import { useBridgeContract } from '../hooks/useBridgeContract'
 
@@ -131,6 +132,13 @@ const AdminPanel: React.FC = () => {
           <Settings className="w-4 h-4" />
           <span>Settings</span>
         </button>
+        <Link
+          to="/admin/rewards"
+          className="px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+        >
+          <Gift className="w-4 h-4" />
+          <span>Rewards</span>
+        </Link>
       </div>
 
       {activeTab === 'tokens' && (
