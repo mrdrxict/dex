@@ -47,6 +47,16 @@ export const SUPPORTED_CHAINS = {
     gasLimit: 200000,
     maxGasPrice: '1',
     blockTime: 5000
+  },
+  // ESR Testnet
+  25062019: {
+    name: 'ESR Testnet',
+    rpcUrl: process.env.ESR_RPC_URL,
+    bridgeAddress: process.env.ESR_BRIDGE_ADDRESS,
+    minConfirmations: 3,
+    gasLimit: 200000,
+    maxGasPrice: '1',
+    blockTime: 3000
   }
 };
 

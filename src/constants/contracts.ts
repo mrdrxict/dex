@@ -46,6 +46,14 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     bridge: '0x0000000000000000000000000000000000000000',
     dxbToken: '0x0000000000000000000000000000000000000000',
     weth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'     // WETH on Arbitrum
+  },
+  // ESR Testnet
+  25062019: {
+    factory: '0x0000000000000000000000000000000000000000',  // Deploy our Factory here
+    router: '0x0000000000000000000000000000000000000000',   // Deploy our Router here
+    bridge: '0x0000000000000000000000000000000000000000',   // Deploy our Bridge here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0x0000000000000000000000000000000000000000'      // Deploy WESR here
   }
 }
 

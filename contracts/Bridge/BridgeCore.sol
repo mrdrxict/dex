@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "../DEX/FeeManager.sol";
 
-contract DexBridgeCore is Ownable, ReentrancyGuard, Pausable {
+contract DexBridgeCore is Ownable, ReentrancyGuard, Pausable, FeeManager {
     struct BridgeToken {
         address tokenAddress;
         uint256 chainId;
@@ -90,7 +91,7 @@ contract DexBridgeCore is Ownable, ReentrancyGuard, Pausable {
         _;
     }
     
-    constructor(uint256 _chainId, address _feeCollector) {
+    constructor(uint256 _chainId, address _feeCollector, address _usdtToken) FeeManager(_usdtToken) {
         currentChainId = _chainId;
         feeCollector = _feeCollector;
         supportedChains[_chainId] = true;
@@ -139,7 +140,7 @@ contract DexBridgeCore is Ownable, ReentrancyGuard, Pausable {
         uint256 _amount,
         uint256 _targetChain,
         address _targetAddress
-    ) external payable nonReentrant whenNotPaused returns (bytes32 txId) {
+    ) external payable nonReentrant whenNotPaused collectFee("bridge") returns (bytes32 txId) {
         require(supportedTokens[_token].isActive, "Token not supported");
         require(supportedChains[_targetChain], "Target chain not supported");
         require(_targetChain != currentChainId, "Cannot bridge to same chain");
@@ -214,7 +215,7 @@ contract DexBridgeCore is Ownable, ReentrancyGuard, Pausable {
         uint256 _amount,
         uint256 _targetChain,
         address _targetAddress
-    ) external nonReentrant whenNotPaused returns (bytes32 txId) {
+    ) external nonReentrant whenNotPaused collectFee("bridge") returns (bytes32 txId) {
         require(supportedTokens[_token].isActive, "Token not supported");
         require(!supportedTokens[_token].isNative, "Cannot burn native token");
         require(supportedChains[_targetChain], "Target chain not supported");

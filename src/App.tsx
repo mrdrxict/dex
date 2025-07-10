@@ -5,8 +5,8 @@ import Layout from './components/Layout/Layout'
 import Swap from './pages/Swap'
 import Pools from './pages/Pools'
 import Bridge from './pages/Bridge'
+import Stake from './pages/Stake'
 import Analytics from './pages/Analytics'
-import Rewards from './pages/Rewards'
 import AdminPanel from './components/AdminPanel'
 
 function App() {
@@ -19,8 +19,8 @@ function App() {
               <Route path="/" element={<Swap />} />
               <Route path="/pools" element={<Pools />} />
               <Route path="/bridge" element={<Bridge />} />
+              <Route path="/stake" element={<Stake />} />
               <Route path="/analytics" element={<Analytics />} />
-              <Route path="/rewards" element={<Rewards />} />
               <Route path="/admin" element={<AdminPanel />} />
             </Routes>
           </Layout>

@@ -39,6 +39,14 @@ export const SUPPORTED_CHAINS: Chain[] = [
     rpcUrl: 'https://arb1.arbitrum.io/rpc',
     blockExplorer: 'https://arbiscan.io',
     icon: '🔵'
+  },
+  {
+    id: 25062019,
+    name: 'ESR Testnet',
+    symbol: 'ESR',
+    rpcUrl: 'https://testnet.rpc.esrscan.com',
+    blockExplorer: 'https://testnet.esrscan.com',
+    icon: '🟢'
   }
 ]
 

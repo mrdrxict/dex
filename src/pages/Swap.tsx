@@ -23,6 +23,7 @@ const Swap: React.FC = () => {
   const [isSwapping, setIsSwapping] = useState(false)
   const [priceImpact, setPriceImpact] = useState('0')
   const [needsApproval, setNeedsApproval] = useState(false)
+  const [feeWarning, setFeeWarning] = useState('')
 
   const calculateOutputAmount = async () => {
     if (!fromToken || !toToken || !fromAmount || !contracts.router) return
@@ -53,10 +54,27 @@ const Swap: React.FC = () => {
     }
   }
 
+  const checkUSDTFeeRequirements = async () => {
+    // This would check if user has $3 USDT balance and allowance
+    // Implementation depends on your fee contract integration
+    try {
+      // Mock check - replace with actual contract call
+      const hasUSDT = true // await checkFeeRequirements(account)
+      if (!hasUSDT) {
+        setFeeWarning('You need $3 USDT balance and approval for swap fees')
+      } else {
+        setFeeWarning('')
+      }
+    } catch (error) {
+      setFeeWarning('Unable to verify USDT fee requirements')
+    }
+  }
+
   React.useEffect(() => {
     if (fromToken && toToken && fromAmount) {
       calculateOutputAmount()
       checkApproval()
+      checkUSDTFeeRequirements()
     }
   }, [fromToken, toToken, fromAmount])
 
@@ -177,10 +195,20 @@ const Swap: React.FC = () => {
               <span className="text-gray-600 dark:text-gray-400">Slippage Tolerance</span>
               <span className="font-medium">{slippage}%</span>
             </div>
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="text-gray-600 dark:text-gray-400">Swap Fee</span>
+              <span className="font-medium text-orange-600 dark:text-orange-400">$3 USDT</span>
+            </div>
             {parseFloat(priceImpact) > 5 && (
               <div className="flex items-center space-x-2 text-sm text-orange-600 dark:text-orange-400">
                 <AlertCircle className="w-4 h-4" />
                 <span>High price impact: {priceImpact}%</span>
+              </div>
+            )}
+            {feeWarning && (
+              <div className="flex items-center space-x-2 text-sm text-red-600 dark:text-red-400">
+                <AlertCircle className="w-4 h-4" />
+                <span>{feeWarning}</span>
               </div>
             )}
           </div>

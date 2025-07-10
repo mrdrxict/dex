@@ -91,6 +91,25 @@ export const TOKENS: Record<number, Token[]> = {
       chainId: 42161,
       logoURI: 'https://tokens.1inch.io/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8.png'
     }
+  ],
+  // ESR Testnet
+  25062019: [
+    {
+      address: '0x0000000000000000000000000000000000000000', // Native ESR
+      symbol: 'ESR',
+      name: 'ESR Token',
+      decimals: 18,
+      chainId: 25062019,
+      logoURI: 'https://via.placeholder.com/32/00FF00/FFFFFF?text=ESR'
+    },
+    {
+      address: '0x0000000000000000000000000000000000000000', // USDT on ESR
+      symbol: 'USDT',
+      name: 'Tether USD',
+      decimals: 6,
+      chainId: 25062019,
+      logoURI: 'https://tokens.1inch.io/0xdac17f958d2ee523a2206206994597c13d831ec7.png'
+    }
   ]
 }
 

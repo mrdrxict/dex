@@ -10,8 +10,8 @@ const Navigation: React.FC = () => {
     { path: '/', label: 'Swap', icon: ArrowLeftRight },
     { path: '/pools', label: 'Pools', icon: Droplets },
     { path: '/bridge', label: 'Bridge', icon: Bridge },
+    { path: '/stake', label: 'Stake', icon: Gift },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/rewards', label: 'Rewards', icon: Gift },
   ]
 
   // Mock admin check - replace with actual owner verification

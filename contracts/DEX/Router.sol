@@ -6,8 +6,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Factory.sol";
 import "./Pair.sol";
 import "./libraries/DexBridgeLibrary.sol";
+import "./FeeManager.sol";
 
-contract DexBridgeRouter is ReentrancyGuard {
+contract DexBridgeRouter is ReentrancyGuard, FeeManager {
     address public immutable factory;
     address public immutable WETH;
     
@@ -16,7 +17,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         _;
     }
     
-    constructor(address _factory, address _WETH) {
+    constructor(address _factory, address _WETH, address _usdtToken) FeeManager(_usdtToken) {
         factory = _factory;
         WETH = _WETH;
     }
@@ -115,7 +116,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         address[] calldata path,
         address to,
         uint deadline
-    ) external ensure(deadline) nonReentrant returns (uint[] memory amounts) {
+    ) external ensure(deadline) nonReentrant collectFee("swap") returns (uint[] memory amounts) {
         amounts = DexBridgeLibrary.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, 'DexBridge: INSUFFICIENT_OUTPUT_AMOUNT');
         IERC20(path[0]).transferFrom(msg.sender, DexBridgeLibrary.pairFor(factory, path[0], path[1]), amounts[0]);
@@ -128,7 +129,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         address[] calldata path,
         address to,
         uint deadline
-    ) external ensure(deadline) nonReentrant returns (uint[] memory amounts) {
+    ) external ensure(deadline) nonReentrant collectFee("swap") returns (uint[] memory amounts) {
         amounts = DexBridgeLibrary.getAmountsIn(factory, amountOut, path);
         require(amounts[0] <= amountInMax, 'DexBridge: EXCESSIVE_INPUT_AMOUNT');
         IERC20(path[0]).transferFrom(msg.sender, DexBridgeLibrary.pairFor(factory, path[0], path[1]), amounts[0]);
@@ -140,6 +141,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         payable
         ensure(deadline)
         nonReentrant
+        collectFee("swap")
         returns (uint[] memory amounts)
     {
         require(path[0] == WETH, 'DexBridge: INVALID_PATH');
@@ -154,6 +156,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         external
         ensure(deadline)
         nonReentrant
+        collectFee("swap")
         returns (uint[] memory amounts)
     {
         require(path[path.length - 1] == WETH, 'DexBridge: INVALID_PATH');
@@ -169,6 +172,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         external
         ensure(deadline)
         nonReentrant
+        collectFee("swap")
         returns (uint[] memory amounts)
     {
         require(path[path.length - 1] == WETH, 'DexBridge: INVALID_PATH');
@@ -185,6 +189,7 @@ contract DexBridgeRouter is ReentrancyGuard {
         payable
         ensure(deadline)
         nonReentrant
+        collectFee("swap")
         returns (uint[] memory amounts)
     {
         require(path[0] == WETH, 'DexBridge: INVALID_PATH');
