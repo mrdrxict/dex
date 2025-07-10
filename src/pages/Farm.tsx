@@ -25,7 +25,8 @@ const Farm: React.FC = () => {
     getAllPools, 
     getUserInfo, 
     pendingESR,
-    getFarmingStats 
+    getFarmingStats,
+    farmingContract
   } = useFarmingContract()
   
   const [pools, setPools] = useState<Pool[]>([])
@@ -44,17 +45,21 @@ const Farm: React.FC = () => {
   const [showStakeModal, setShowStakeModal] = useState(false)
 
   useEffect(() => {
-    loadPools()
-    loadFarmingStats()
-  }, [])
+    if (farmingContract) {
+      loadPools()
+      loadFarmingStats()
+    }
+  }, [farmingContract])
 
   useEffect(() => {
-    if (account) {
+    if (account && farmingContract) {
       loadUserData()
     }
-  }, [account, pools])
+  }, [account, pools, farmingContract])
 
   const loadPools = async () => {
+    if (!farmingContract) return
+    
     try {
       const poolData = await getAllPools()
       const formattedPools: Pool[] = poolData.lpTokens.map((lpToken: string, index: number) => ({
@@ -75,6 +80,8 @@ const Farm: React.FC = () => {
   }
 
   const loadFarmingStats = async () => {
+    if (!farmingContract) return
+    
     try {
       const stats = await getFarmingStats()
       setFarmingStats(stats)
@@ -84,7 +91,7 @@ const Farm: React.FC = () => {
   }
 
   const loadUserData = async () => {
-    if (!account) return
+    if (!account || !farmingContract) return
     
     try {
       const updatedPools = await Promise.all(
