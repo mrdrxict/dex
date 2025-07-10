@@ -8,6 +8,7 @@ import Pools from './pages/Pools'
 import Bridge from './pages/Bridge'
 import Analytics from './pages/Analytics'
 import Rewards from './pages/Rewards'
+import AdminPanel from './components/AdminPanel'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/bridge" element={<Bridge />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/rewards" element={<Rewards />} />
+              <Route path="/admin" element={<AdminPanel />} />
             </Routes>
           </Layout>
         </Router>

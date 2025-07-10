@@ -1,16 +1,64 @@
 import React, { useState } from 'react'
-import { ArrowUpDown, Settings } from 'lucide-react'
+import { ArrowUpDown, Settings, AlertCircle } from 'lucide-react'
 import { Token } from '../constants/tokens'
 import { useWallet } from '../contexts/WalletContext'
+import { useDexContract } from '../hooks/useDexContract'
 import TokenSelector from '../components/TokenSelector'
 
 const Swap: React.FC = () => {
-  const { isConnected } = useWallet()
+  const { isConnected, account } = useWallet()
+  const { 
+    swapExactTokensForTokens, 
+    getAmountsOut, 
+    approveToken, 
+    getTokenAllowance,
+    contracts 
+  } = useDexContract()
+  
   const [fromToken, setFromToken] = useState<Token | null>(null)
   const [toToken, setToToken] = useState<Token | null>(null)
   const [fromAmount, setFromAmount] = useState('')
   const [toAmount, setToAmount] = useState('')
   const [slippage, setSlippage] = useState('0.5')
+  const [isSwapping, setIsSwapping] = useState(false)
+  const [priceImpact, setPriceImpact] = useState('0')
+  const [needsApproval, setNeedsApproval] = useState(false)
+
+  const calculateOutputAmount = async () => {
+    if (!fromToken || !toToken || !fromAmount || !contracts.router) return
+    
+    try {
+      const path = [fromToken.address, toToken.address]
+      const amounts = await getAmountsOut(fromAmount, path)
+      setToAmount(amounts[1])
+      
+      // Calculate price impact (simplified)
+      const impact = ((parseFloat(amounts[0]) - parseFloat(amounts[1])) / parseFloat(amounts[0]) * 100).toFixed(2)
+      setPriceImpact(impact)
+    } catch (error) {
+      console.error('Error calculating output amount:', error)
+      setToAmount('0')
+    }
+  }
+
+  const checkApproval = async () => {
+    if (!fromToken || !fromAmount || !contracts.router || !account) return
+    
+    try {
+      const allowance = await getTokenAllowance(fromToken.address, contracts.router.target as string)
+      setNeedsApproval(parseFloat(allowance) < parseFloat(fromAmount))
+    } catch (error) {
+      console.error('Error checking approval:', error)
+      setNeedsApproval(true)
+    }
+  }
+
+  React.useEffect(() => {
+    if (fromToken && toToken && fromAmount) {
+      calculateOutputAmount()
+      checkApproval()
+    }
+  }, [fromToken, toToken, fromAmount])
 
   const handleSwapTokens = () => {
     setFromToken(toToken)
@@ -19,13 +67,54 @@ const Swap: React.FC = () => {
     setToAmount(fromAmount)
   }
 
-  const handleSwap = () => {
+  const handleApprove = async () => {
     if (!isConnected) {
       alert('Please connect your wallet first')
       return
     }
-    // Implement swap logic here
-    console.log('Swapping:', { fromToken, toToken, fromAmount, toAmount })
+    
+    if (!fromToken || !contracts.router) return
+    
+    try {
+      setIsSwapping(true)
+      await approveToken(fromToken.address, contracts.router.target as string, fromAmount)
+      setNeedsApproval(false)
+    } catch (error) {
+      console.error('Approval failed:', error)
+      alert('Approval failed. Please try again.')
+    } finally {
+      setIsSwapping(false)
+    }
+  }
+
+  const handleSwap = async () => {
+    if (!isConnected) {
+      alert('Please connect your wallet first')
+      return
+    }
+    
+    if (!fromToken || !toToken || !fromAmount || !toAmount) {
+      alert('Please select tokens and enter amounts')
+      return
+    }
+    
+    try {
+      setIsSwapping(true)
+      const path = [fromToken.address, toToken.address]
+      const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes
+      const minAmountOut = (parseFloat(toAmount) * (100 - parseFloat(slippage)) / 100).toString()
+      
+      const tx = await swapExactTokensForTokens(fromAmount, minAmountOut, path, deadline)
+      
+      alert('Swap successful!')
+      setFromAmount('')
+      setToAmount('')
+    } catch (error) {
+      console.error('Swap failed:', error)
+      alert('Swap failed. Please try again.')
+    } finally {
+      setIsSwapping(false)
+    }
   }
 
   return (
@@ -84,20 +173,36 @@ const Swap: React.FC = () => {
 
           {/* Slippage Settings */}
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-gray-600 dark:text-gray-400">Slippage Tolerance</span>
               <span className="font-medium">{slippage}%</span>
             </div>
+            {parseFloat(priceImpact) > 5 && (
+              <div className="flex items-center space-x-2 text-sm text-orange-600 dark:text-orange-400">
+                <AlertCircle className="w-4 h-4" />
+                <span>High price impact: {priceImpact}%</span>
+              </div>
+            )}
           </div>
 
-          {/* Swap Button */}
-          <button
-            onClick={handleSwap}
-            disabled={!fromToken || !toToken || !fromAmount || !isConnected}
-            className="w-full btn-primary py-4 text-lg font-semibold"
-          >
-            {!isConnected ? 'Connect Wallet' : 'Swap'}
-          </button>
+          {/* Action Buttons */}
+          {needsApproval && isConnected ? (
+            <button
+              onClick={handleApprove}
+              disabled={isSwapping || !fromToken}
+              className="w-full btn-primary py-4 text-lg font-semibold"
+            >
+              {isSwapping ? 'Approving...' : `Approve ${fromToken?.symbol}`}
+            </button>
+          ) : (
+            <button
+              onClick={handleSwap}
+              disabled={!fromToken || !toToken || !fromAmount || !isConnected || isSwapping}
+              className="w-full btn-primary py-4 text-lg font-semibold"
+            >
+              {!isConnected ? 'Connect Wallet' : isSwapping ? 'Swapping...' : 'Swap'}
+            </button>
+          )}
         </div>
       </div>
 

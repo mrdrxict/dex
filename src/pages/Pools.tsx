@@ -1,10 +1,56 @@
 import React, { useState } from 'react'
 import { Plus, Droplets } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
+import { useDexContract } from '../hooks/useDexContract'
+import { getTokensByChain } from '../constants/tokens'
 
 const Pools: React.FC = () => {
-  const { isConnected } = useWallet()
+  const { isConnected, chainId } = useWallet()
+  const { addLiquidity, removeLiquidity, getPairAddress, createPair } = useDexContract()
   const [activeTab, setActiveTab] = useState<'pools' | 'positions'>('pools')
+  const [showAddLiquidity, setShowAddLiquidity] = useState(false)
+  const [tokenA, setTokenA] = useState('')
+  const [tokenB, setTokenB] = useState('')
+  const [amountA, setAmountA] = useState('')
+  const [amountB, setAmountB] = useState('')
+  const [isAddingLiquidity, setIsAddingLiquidity] = useState(false)
+
+  const availableTokens = chainId ? getTokensByChain(chainId) : []
+
+  const handleAddLiquidity = async () => {
+    if (!tokenA || !tokenB || !amountA || !amountB) {
+      alert('Please fill in all fields')
+      return
+    }
+
+    try {
+      setIsAddingLiquidity(true)
+      
+      // Check if pair exists, create if not
+      const pairAddress = await getPairAddress(tokenA, tokenB)
+      if (pairAddress === '0x0000000000000000000000000000000000000000') {
+        await createPair(tokenA, tokenB)
+      }
+      
+      const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes
+      const minAmountA = (parseFloat(amountA) * 0.95).toString() // 5% slippage
+      const minAmountB = (parseFloat(amountB) * 0.95).toString()
+      
+      await addLiquidity(tokenA, tokenB, amountA, amountB, minAmountA, minAmountB, deadline)
+      
+      alert('Liquidity added successfully!')
+      setShowAddLiquidity(false)
+      setTokenA('')
+      setTokenB('')
+      setAmountA('')
+      setAmountB('')
+    } catch (error) {
+      console.error('Add liquidity failed:', error)
+      alert('Failed to add liquidity. Please try again.')
+    } finally {
+      setIsAddingLiquidity(false)
+    }
+  }
 
   const mockPools = [
     {
@@ -30,6 +76,7 @@ const Pools: React.FC = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Liquidity Pools</h1>
         <button className="btn-primary flex items-center space-x-2">
+          onClick={() => setShowAddLiquidity(true)}
           <Plus className="w-4 h-4" />
           <span>Add Liquidity</span>
         </button>
@@ -103,6 +150,95 @@ const Pools: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Add Liquidity Modal */}
+      {showAddLiquidity && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="card p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold mb-6">Add Liquidity</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Token A
+                </label>
+                <select
+                  value={tokenA}
+                  onChange={(e) => setTokenA(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Select Token A</option>
+                  {availableTokens.map((token) => (
+                    <option key={token.address} value={token.address}>
+                      {token.symbol} - {token.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Amount A
+                </label>
+                <input
+                  type="number"
+                  placeholder="0.0"
+                  value={amountA}
+                  onChange={(e) => setAmountA(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Token B
+                </label>
+                <select
+                  value={tokenB}
+                  onChange={(e) => setTokenB(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Select Token B</option>
+                  {availableTokens.filter(token => token.address !== tokenA).map((token) => (
+                    <option key={token.address} value={token.address}>
+                      {token.symbol} - {token.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Amount B
+                </label>
+                <input
+                  type="number"
+                  placeholder="0.0"
+                  value={amountB}
+                  onChange={(e) => setAmountB(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              
+              <div className="flex space-x-3 pt-4">
+                <button
+                  onClick={() => setShowAddLiquidity(false)}
+                  className="flex-1 btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddLiquidity}
+                  disabled={isAddingLiquidity}
+                  className="flex-1 btn-primary"
+                >
+                  {isAddingLiquidity ? 'Adding...' : 'Add Liquidity'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
