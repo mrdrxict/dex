@@ -1,35 +1,39 @@
 # DexBridge - Decentralized Exchange with Cross-Chain Bridge
 
-A modern, full-featured decentralized exchange (DEX) built with React, TypeScript, and Web3 technologies. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, and comprehensive analytics in a beautiful, responsive interface.
+A modern, **100% self-contained** decentralized exchange (DEX) built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
 
 ## 🌟 Features
 
 ### Core DEX Functionality
-- **Token Swapping**: Swap any ERC-20 tokens with real-time price calculations
-- **Liquidity Pools**: Add/remove liquidity and earn trading fees
-- **Multi-Chain Support**: Ethereum, BSC, Polygon, and Arbitrum
-- **Slippage Protection**: Configurable slippage tolerance and price impact warnings
-- **Transaction History**: Track all your swaps and liquidity operations
+- **Custom DEX Contracts**: Our own Factory.sol, Router.sol, and Pair.sol (Uniswap V2-style)
+- **Token Swapping**: Swap tokens using our proprietary routing system
+- **Liquidity Pools**: Create and manage liquidity pools within our ecosystem
+- **Multi-Chain Deployment**: Deploy on Ethereum, BSC, Polygon, and Arbitrum
+- **Real-time Pricing**: AMM-based pricing with slippage protection
+- **LP Token Management**: Mint and burn LP tokens for liquidity providers
 
 ### Cross-Chain Bridge
-- **Multi-Chain Transfers**: Bridge tokens between supported networks
-- **Real-Time Tracking**: Monitor bridge transaction status in real-time
-- **Bridge History**: Complete history of all cross-chain transfers
-- **Fee Estimation**: Transparent fee calculation and time estimates
+- **Custom Bridge Contracts**: Lock/Mint and Burn/Release mechanisms
+- **Native Bridge Logic**: No LayerZero, no Axelar - 100% owned infrastructure
+- **Admin-Controlled**: Relayer system for cross-chain transaction processing
+- **Token Locking**: Lock tokens on source chain, mint on destination
+- **Burn & Release**: Burn wrapped tokens, release native tokens
+- **Bridge Dashboard**: Real-time transaction tracking and history
 
 ### Advanced Features
-- **Analytics Dashboard**: Comprehensive DEX metrics and insights
-- **Rewards System**: Staking and farming opportunities with APR calculations
-- **Dark/Light Mode**: Beautiful UI with theme switching
-- **Wallet Integration**: Support for MetaMask and other Web3 wallets
-- **Responsive Design**: Optimized for desktop and mobile devices
+- **Admin Panel**: Manage supported tokens, relayers, and bridge settings
+- **Analytics Dashboard**: Track TVL, volume, and trading metrics
+- **Rewards System**: Staking and farming with our DXB token
+- **Professional UI**: Dark/light mode with responsive design
+- **Wallet Integration**: MetaMask and Web3 wallet support
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - **Node.js** (v16 or higher)
-- **npm** or **yarn**
+- **npm** or **yarn** 
+- **Hardhat** for smart contract deployment
 - **MetaMask** or compatible Web3 wallet
 - **Git**
 
@@ -46,12 +50,25 @@ A modern, full-featured decentralized exchange (DEX) built with React, TypeScrip
    npm install
    ```
 
-3. **Start the development server**
+3. **Deploy smart contracts** (for local development)
+   ```bash
+   # Start local Hardhat node
+   npx hardhat node
+   
+   # Deploy contracts (in another terminal)
+   npx hardhat run deployment/deploy.js --network localhost
+   ```
+
+4. **Update contract addresses**
+   - Copy deployed contract addresses from deployment output
+   - Update `src/constants/contracts.ts` with the new addresses
+
+5. **Start the development server**
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+6. **Open your browser**
    Navigate to `http://localhost:5173`
 
 ### Environment Setup (Optional)
@@ -59,15 +76,60 @@ A modern, full-featured decentralized exchange (DEX) built with React, TypeScrip
 Create a `.env` file in the root directory for custom configuration:
 
 ```env
-# RPC URLs (optional - defaults are provided)
+# Smart Contract Deployment
+PRIVATE_KEY=your_private_key_here
+
+# RPC URLs for deployment
 VITE_ETHEREUM_RPC_URL=https://mainnet.infura.io/v3/YOUR_INFURA_KEY
 VITE_BSC_RPC_URL=https://bsc-dataseed.binance.org
 VITE_POLYGON_RPC_URL=https://polygon-rpc.com
 VITE_ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
-
-# Analytics (optional)
-VITE_ANALYTICS_API_URL=https://api.your-analytics-provider.com
 ```
+
+## 🏗️ Smart Contract Architecture
+
+### DEX Contracts
+
+#### Factory.sol
+- Creates new trading pairs
+- Manages pair registry
+- Emits PairCreated events
+
+#### Router.sol  
+- Handles all user interactions
+- Manages liquidity operations
+- Executes token swaps
+- Calculates optimal routing paths
+
+#### Pair.sol
+- Individual trading pair contract
+- Implements AMM (x * y = k) formula
+- Manages LP token minting/burning
+- Handles swap execution
+
+### Bridge Contracts
+
+#### BridgeCore.sol
+- Main bridge contract for each chain
+- Handles token locking and releasing
+- Manages supported tokens and fees
+- Controls relayer permissions
+
+#### DexBridgeWrappedToken.sol
+- Wrapped token contract for non-native assets
+- Mintable/burnable by bridge contract
+- Standard ERC-20 implementation
+
+### Token Contracts
+
+#### DexBridgeToken.sol (DXB)
+- Native governance and utility token
+- Used for staking and rewards
+- Deflationary tokenomics
+
+#### WETH.sol
+- Wrapped ETH implementation
+- Standard deposit/withdraw functions
 
 ## 📱 Usage Guide
 
@@ -80,7 +142,7 @@ VITE_ANALYTICS_API_URL=https://api.your-analytics-provider.com
 
 2. **Select Network**
    - Use the chain selector to switch between networks
-   - Supported: Ethereum, BSC, Polygon, Arbitrum
+   - Ensure contracts are deployed on selected network
 
 ### Token Swapping
 
@@ -88,8 +150,9 @@ VITE_ANALYTICS_API_URL=https://api.your-analytics-provider.com
 2. **Select Tokens**
    - Choose "From" token and amount
    - Select "To" token
-   - Review price impact and slippage
+   - System calculates output using our AMM
 3. **Execute Swap**
+   - Approve token spending if needed
    - Click "Swap" button
    - Confirm transaction in wallet
    - Wait for confirmation
@@ -100,9 +163,9 @@ VITE_ANALYTICS_API_URL=https://api.your-analytics-provider.com
 2. **Click "Add Liquidity"**
 3. **Select Token Pair**
    - Choose two tokens for the pool
-   - Enter amounts for both tokens
+   - Enter amounts (system calculates ratios)
 4. **Add Liquidity**
-   - Review pool share and LP tokens
+   - Approve both tokens if needed
    - Confirm transaction
    - Receive LP tokens
 
@@ -112,250 +175,174 @@ VITE_ANALYTICS_API_URL=https://api.your-analytics-provider.com
 2. **Configure Transfer**
    - Select source and destination chains
    - Choose token and amount
-   - Enter destination address
+   - Enter destination address (optional)
 3. **Execute Bridge**
-   - Review fees and estimated time
+   - Review bridge fees
    - Confirm transaction
-   - Track progress in Bridge History
+   - Wait for relayer to process on destination chain
 
-### Staking & Rewards
+### Admin Functions (Contract Owner Only)
 
-1. **Visit Rewards tab**
-2. **Choose Staking Pool**
-   - Review APR and lock periods
-   - Select amount to stake
-3. **Stake Tokens**
-   - Confirm staking transaction
-   - Earn rewards over time
-   - Claim rewards when ready
+1. **Access Admin Panel** (`/admin`)
+2. **Manage Supported Tokens**
+   - Add new tokens to bridge
+   - Set minimum/maximum amounts
+   - Configure bridge fees
+3. **Manage Relayers**
+   - Add/remove authorized relayers
+   - Control bridge operations
+4. **Bridge Settings**
+   - Update global fees
+   - Pause/unpause bridge
+   - Emergency controls
 
-## 🏗️ Architecture
+## 🔧 Development & Deployment
 
-### Frontend Stack
-- **React 18** - Modern React with hooks and context
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first styling
-- **React Router** - Client-side routing
-- **Ethers.js** - Ethereum interaction library
+### Local Development
 
-### Project Structure
-```
-src/
-├── components/          # Reusable UI components
-│   ├── Layout/         # Header, navigation
-│   ├── Wallet/         # Wallet connection components
-│   └── TokenSelector.tsx
-├── contexts/           # React contexts
-│   ├── ThemeContext.tsx
-│   └── WalletContext.tsx
-├── pages/              # Main application pages
-│   ├── Swap.tsx
-│   ├── Pools.tsx
-│   ├── Bridge.tsx
-│   ├── Analytics.tsx
-│   └── Rewards.tsx
-├── constants/          # Configuration and constants
-│   ├── chains.ts
-│   └── tokens.ts
-└── App.tsx            # Main application component
-```
-
-### Key Components
-
-#### WalletContext
-Manages wallet connection, chain switching, and Web3 provider state.
-
-#### ThemeContext
-Handles dark/light mode switching with localStorage persistence.
-
-#### TokenSelector
-Reusable component for token selection with search functionality.
-
-#### Chain Management
-Support for multiple blockchain networks with automatic switching.
-
-## 🔧 Configuration
-
-### Supported Chains
-
-The application supports the following blockchain networks:
-
-| Network | Chain ID | Symbol | RPC URL |
-|---------|----------|--------|---------|
-| Ethereum | 1 | ETH | Infura/Alchemy |
-| BSC | 56 | BNB | Binance RPC |
-| Polygon | 137 | MATIC | Polygon RPC |
-| Arbitrum | 42161 | ETH | Arbitrum RPC |
-
-### Token Lists
-
-Tokens are configured in `src/constants/tokens.ts`. Each token includes:
-- Contract address
-- Symbol and name
-- Decimals
-- Chain ID
-- Logo URI
-
-### Adding New Tokens
-
-To add support for new tokens:
-
-1. **Update token constants**
-   ```typescript
-   // src/constants/tokens.ts
-   export const TOKENS: Record<number, Token[]> = {
-     1: [ // Ethereum
-       {
-         address: '0x...',
-         symbol: 'TOKEN',
-         name: 'Token Name',
-         decimals: 18,
-         chainId: 1,
-         logoURI: 'https://...'
-       }
-     ]
-   };
+1. **Start Hardhat Node**
+   ```bash
+   npx hardhat node
    ```
 
-2. **Add chain support** (if needed)
-   ```typescript
-   // src/constants/chains.ts
-   export const SUPPORTED_CHAINS: Chain[] = [
-     {
-       id: 1,
-       name: 'Ethereum',
-       symbol: 'ETH',
-       rpcUrl: 'https://...',
-       blockExplorer: 'https://etherscan.io',
-       icon: '⟠'
-     }
-   ];
+2. **Deploy Contracts**
+   ```bash
+   npx hardhat run deployment/deploy.js --network localhost
    ```
 
-## 🛠️ Development
+3. **Update Frontend Config**
+   - Copy contract addresses to `src/constants/contracts.ts`
+   - Update token addresses in `src/constants/tokens.ts`
 
-### Available Scripts
+4. **Start Frontend**
+   ```bash
+   npm run dev
+   ```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+### Mainnet Deployment
 
-### Code Style
+1. **Configure Networks**
+   - Update `hardhat.config.js` with RPC URLs
+   - Set `PRIVATE_KEY` in environment
 
-The project uses:
-- **ESLint** for code linting
-- **TypeScript** for type checking
-- **Prettier** (recommended) for code formatting
+2. **Deploy to Each Chain**
+   ```bash
+   # Ethereum
+   npx hardhat run deployment/deploy.js --network ethereum
+   
+   # BSC
+   npx hardhat run deployment/deploy.js --network bsc
+   
+   # Polygon  
+   npx hardhat run deployment/deploy.js --network polygon
+   
+   # Arbitrum
+   npx hardhat run deployment/deploy.js --network arbitrum
+   ```
 
-### Contributing
+3. **Update Frontend**
+   - Update contract addresses for each network
+   - Deploy frontend to hosting service
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### Contract Verification
 
-## 🔐 Security Considerations
-
-### Smart Contract Integration
-
-This frontend is designed to work with:
-- **Uniswap V2/V3** compatible DEX contracts
-- **LayerZero/Axelar** bridge protocols
-- **Standard ERC-20** token contracts
-
-### Security Best Practices
-
-- Always verify contract addresses
-- Use hardware wallets for large amounts
-- Check slippage and price impact
-- Verify bridge destinations
-- Keep private keys secure
-
-### Audit Status
-
-⚠️ **Important**: This is a frontend interface. Always verify that the underlying smart contracts have been properly audited before using with real funds.
-
-## 📊 Analytics & Monitoring
-
-### Built-in Analytics
-
-The application includes comprehensive analytics:
-- Total Value Locked (TVL)
-- 24h trading volume
-- Fee generation
-- Active users
-- Top trading pairs
-
-### External Integration
-
-For production use, consider integrating:
-- **The Graph** for blockchain data indexing
-- **DeFiPulse** for TVL tracking
-- **CoinGecko API** for price feeds
-- **Custom analytics** for user behavior
-
-## 🚀 Deployment
-
-### Build for Production
+After deployment, verify contracts on block explorers:
 
 ```bash
-npm run build
+npx hardhat verify --network ethereum CONTRACT_ADDRESS
 ```
 
-### Deployment Options
+## 🔐 Security Features
 
-#### Vercel (Recommended)
-```bash
-npm install -g vercel
-vercel --prod
+### Smart Contract Security
+- **ReentrancyGuard**: Prevents reentrancy attacks
+- **Access Control**: Owner-only functions for critical operations
+- **Pausable**: Emergency pause functionality
+- **Input Validation**: Comprehensive parameter checking
+- **Safe Math**: Overflow protection built-in
+
+### Bridge Security
+- **Multi-signature**: Recommended for production relayers
+- **Rate Limiting**: Configurable min/max amounts
+- **Fee Protection**: Prevents excessive fee extraction
+- **Emergency Withdrawal**: Owner can recover stuck funds
+
+### Frontend Security
+- **Input Sanitization**: All user inputs validated
+- **Transaction Simulation**: Preview before execution
+- **Slippage Protection**: Configurable slippage tolerance
+- **Approval Management**: Precise token approvals
+
+## 📊 Contract Addresses
+
+After deployment, update these addresses in `src/constants/contracts.ts`:
+
+```typescript
+export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
+  1: { // Ethereum
+    factory: '0x...', // Your deployed Factory
+    router: '0x...',  // Your deployed Router  
+    bridge: '0x...',  // Your deployed Bridge
+    dxbToken: '0x...', // Your DXB Token
+    weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+  }
+  // ... other networks
+}
 ```
 
-#### Netlify
-```bash
-npm run build
-# Upload dist/ folder to Netlify
-```
+## 🚀 Production Checklist
 
-#### IPFS (Decentralized)
-```bash
-npm run build
-# Upload dist/ folder to IPFS
-```
+Before going live:
 
-### Environment Variables
-
-For production deployment, set:
-- RPC URLs for each supported chain
-- Analytics API keys
-- Error tracking (Sentry, etc.)
+- [ ] **Smart Contract Audits**: Get contracts audited by professionals
+- [ ] **Testnet Testing**: Deploy and test on testnets first  
+- [ ] **Multi-sig Setup**: Use multi-signature wallets for admin functions
+- [ ] **Monitoring**: Set up contract monitoring and alerts
+- [ ] **Documentation**: Update all contract addresses and configurations
+- [ ] **Emergency Procedures**: Establish incident response procedures
+- [ ] **Insurance**: Consider smart contract insurance coverage
 
 ## 🤝 Support & Community
 
 ### Getting Help
-
-- **Documentation**: Check this README and code comments
+- **Documentation**: This README and inline code comments
 - **Issues**: Report bugs via GitHub issues
-- **Discussions**: Join community discussions
+- **Discussions**: Technical discussions and feature requests
 
-### Roadmap
+### Contributing
+- Fork the repository
+- Create feature branches
+- Submit pull requests
+- Follow coding standards
 
-- [ ] Additional chain support (Avalanche, Fantom)
-- [ ] Advanced order types (limit orders)
-- [ ] Portfolio tracking
-- [ ] Mobile app
-- [ ] Governance features
+## ⚠️ Important Disclaimers
 
-## 📄 License
+### Security Notice
+⚠️ **CRITICAL**: This is a complex DeFi system handling real value. Before mainnet deployment:
+- **GET PROFESSIONAL AUDITS** for all smart contracts
+- **TEST EXTENSIVELY** on testnets with real scenarios
+- **USE MULTI-SIGNATURE** wallets for all admin functions
+- **IMPLEMENT MONITORING** for all contract interactions
+- **HAVE EMERGENCY PROCEDURES** ready for incident response
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Legal Disclaimer
+This software is provided "as is" without warranty of any kind. Users assume all risks associated with:
+- Smart contract vulnerabilities
+- Bridge failures or delays  
+- Loss of funds due to bugs or exploits
+- Regulatory compliance in their jurisdiction
 
-## ⚠️ Disclaimer
+The developers are not responsible for any financial losses, legal issues, or other damages arising from the use of this software.
 
-This software is provided "as is" without warranty. Use at your own risk. Always verify smart contract addresses and audit status before interacting with DeFi protocols. The developers are not responsible for any financial losses.
+### Regulatory Compliance
+Users are responsible for ensuring compliance with local laws and regulations regarding:
+- Cryptocurrency trading and exchange
+- Cross-border financial transfers
+- Tax reporting and obligations
+- KYC/AML requirements where applicable
 
 ---
 
 **Built with ❤️ for the DeFi community**
+
+*A truly decentralized, self-contained DEX and bridge solution*
