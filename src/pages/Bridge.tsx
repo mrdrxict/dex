@@ -8,7 +8,6 @@ import { useDexContract } from '../hooks/useDexContract'
 const Bridge: React.FC = () => {
   const { isConnected, account, chainId } = useWallet()
   const { lockTokens, burnAndBridge, getUserTransactions, estimateBridgeFee } = useBridgeContract()
-  const { approveToken, getTokenAllowance } = useDexContract()
   
   const [fromChain, setFromChain] = useState(SUPPORTED_CHAINS[0])
   const [toChain, setToChain] = useState(SUPPORTED_CHAINS[1])
