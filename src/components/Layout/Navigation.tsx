@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { ArrowLeftRight, Droplets, Bridge, BarChart3, Gift } from 'lucide-react'
+import { ArrowLeftRight, Droplets, Grid as Bridge, BarChart3, Gift } from 'lucide-react'
 
 const Navigation: React.FC = () => {
   const navItems = [

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Bridge as BridgeIcon, ArrowRight, Clock } from 'lucide-react'
+import { Grid as BridgeIcon, ArrowRight, Clock } from 'lucide-react'
 import { SUPPORTED_CHAINS } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
 
