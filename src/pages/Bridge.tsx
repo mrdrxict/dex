@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Grid as BridgeIcon, ArrowRight, Clock, AlertCircle } from 'lucide-react'
 import { SUPPORTED_CHAINS } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
-import { useBridgeContract, BridgeStatus } from '../hooks/useBridgeContract'
+import { useBridgeContract } from '../hooks/useBridgeContract'
 
 const Bridge: React.FC = () => {
   const { isConnected, account, chainId } = useWallet()
