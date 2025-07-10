@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
+import { getContractAddresses } from '../constants/contracts'
 
 const FARMING_ABI = [
   'function addPool(address lpToken, uint256 allocPoint, string memory name, bool withUpdate) external',
@@ -37,9 +38,6 @@ export const useFarmingContract = () => {
   const { provider, chainId, account } = useWallet()
   const [farmingContract, setFarmingContract] = useState<ethers.Contract | null>(null)
 
-  // Contract addresses - update after deployment
-  const FARMING_ADDRESS = '0x0000000000000000000000000000000000000000' // Deploy farming contract here
-
   useEffect(() => {
     const initializeContract = async () => {
       if (!provider || !chainId) {
@@ -48,8 +46,14 @@ export const useFarmingContract = () => {
       }
 
       try {
+        const addresses = getContractAddresses(chainId)
+        if (!addresses?.farming) {
+          console.error('Farming contract address not found for chain:', chainId)
+          return
+        }
+        
         const signer = await provider.getSigner()
-        const farming = new ethers.Contract(FARMING_ADDRESS, FARMING_ABI, signer)
+        const farming = new ethers.Contract(addresses.farming, FARMING_ABI, signer)
         setFarmingContract(farming)
       } catch (error) {
         console.error('Error initializing farming contract:', error)
@@ -67,6 +71,10 @@ export const useFarmingContract = () => {
 
   const deposit = async (pid: number, amount: string) => {
     if (!farmingContract || !account) throw new Error('Contract not available')
+    
+    if (!chainId) throw new Error('Chain not connected')
+    const addresses = getContractAddresses(chainId)
+    if (!addresses?.farming) throw new Error('Farming contract address not found')
 
     const poolInfo = await farmingContract.getPoolInfo(pid)
     const lpContract = await getLPContract(poolInfo.lpToken)
@@ -75,9 +83,9 @@ export const useFarmingContract = () => {
     const amountWei = ethers.parseEther(amount)
     
     // Check allowance
-    const allowance = await lpContract.allowance(account, FARMING_ADDRESS)
+    const allowance = await lpContract.allowance(account, addresses.farming)
     if (allowance < amountWei) {
-      const approveTx = await lpContract.approve(FARMING_ADDRESS, amountWei)
+      const approveTx = await lpContract.approve(addresses.farming, amountWei)
       await approveTx.wait()
     }
 
