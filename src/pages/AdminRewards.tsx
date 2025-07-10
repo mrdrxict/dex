@@ -87,6 +87,7 @@ const AdminRewards: React.FC = () => {
   const loadPools = async () => {
     try {
       const poolData = await getAllPools()
+      const formattedPools = poolData.lpTokens.map((lpToken: string, index: number) => ({
         id: index,
         name: poolData.names[index],
         lpToken,
