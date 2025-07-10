@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Lock, Gift, TrendingUp, Users, DollarSign, Clock } from 'lucide-react'
+import { Lock, Gift, TrendingUp, Users, DollarSign } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
 import { useStakingContract } from '../hooks/useStakingContract'
 
@@ -8,7 +8,6 @@ const Stake: React.FC = () => {
   const { 
     stakeESR, 
     unstakeESR, 
-    claimRewards, 
     claimAllRewards,
     getStakeInfo, 
     getStakingStats,
