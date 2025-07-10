@@ -59,6 +59,8 @@ Copy the contracts from `remix-contracts/` folder into Remix:
 
 #### Step 1: Deploy Tokens
 1. **WETH.sol** - No constructor parameters
+   - On Avalanche: Deploy as WAVAX
+   - On Fantom: Deploy as WFTM
 2. **DexBridgeToken.sol** - No constructor parameters (for both DXB and USDT)
 
 #### Step 2: Deploy DEX
@@ -78,6 +80,8 @@ Copy the contracts from `remix-contracts/` folder into Remix:
 #### Step 4: Deploy Bridge
 1. **BridgeCore.sol** - Parameters:
    - `_chainId`: Current chain ID (1 for Ethereum, 56 for BSC, etc.)
+     - Avalanche: 43114
+     - Fantom: 250
    - `_feeCollector`: Your wallet address
    - `_usdtToken`: USDT token address
 
@@ -133,6 +137,17 @@ export const CONTRACT_ADDRESSES = {
 }
 ```
 
+### Avalanche Specific Notes
+- Native token: AVAX
+- Wrapped token: WAVAX (0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7)
+- Primary DEX: Trader Joe
+- Gas fees are typically very low
+
+### Fantom Specific Notes
+- Native token: FTM
+- Wrapped token: WFTM (0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83)
+- Primary DEX: SpookySwap
+- Extremely low gas fees
 ## 🔧 Key Features
 
 ### Self-Contained Contracts

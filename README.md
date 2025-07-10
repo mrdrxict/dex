@@ -344,6 +344,12 @@ VITE_ESR_RPC_URL=https://testnet.rpc.esrscan.com
    # Arbitrum
    npx hardhat run deployment/deploy.js --network arbitrum
    
+   # Avalanche
+   npx hardhat run deployment/deploy.js --network avalanche
+   
+   # Fantom
+   npx hardhat run deployment/deploy.js --network fantom
+   
    # ESR Testnet
    npx hardhat run deployment/deploy.js --network esr
    ```
@@ -426,11 +432,13 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
 
 ## 🌐 Supported Networks
 
-- **Ethereum Mainnet** (Chain ID: 1)
-- **BSC Mainnet** (Chain ID: 56)
-- **Polygon Mainnet** (Chain ID: 137)
-- **Arbitrum One** (Chain ID: 42161)
-- **ESR Testnet** (Chain ID: 25062019)
+- **Ethereum Mainnet** (Chain ID: 1) ⟠
+- **BSC Mainnet** (Chain ID: 56) 🟡
+- **Polygon Mainnet** (Chain ID: 137) 🟣
+- **Arbitrum One** (Chain ID: 42161) 🔵
+- **Avalanche C-Chain** (Chain ID: 43114) 🔺
+- **Fantom Opera** (Chain ID: 250) 👻
+- **ESR Testnet** (Chain ID: 25062019) 🟢
 
 ## 💰 Fee Structure
 

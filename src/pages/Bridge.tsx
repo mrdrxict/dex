@@ -207,12 +207,15 @@ const Bridge: React.FC = () => {
               <span className="font-medium text-orange-600 dark:text-orange-400">$3 USDT</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Bridge Fee</span>
+              <span className="text-gray-600 dark:text-gray-400">Token Fee</span>
               <span className="font-medium">{bridgeFee} tokens</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600 dark:text-gray-400">Estimated Time</span>
-              <span className="font-medium">5-10 minutes</span>
+              <span className="font-medium">
+                {fromChain.id === 43114 || toChain.id === 43114 ? '2-5 minutes' : 
+                 fromChain.id === 250 || toChain.id === 250 ? '1-3 minutes' : '5-10 minutes'}
+              </span>
             </div>
             {parseFloat(bridgeFee) > parseFloat(amount) * 0.1 && (
               <div className="flex items-center space-x-2 text-sm text-orange-600 dark:text-orange-400">

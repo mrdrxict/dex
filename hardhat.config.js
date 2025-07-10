@@ -24,19 +24,48 @@ module.exports = {
     },
     ethereum: {
       url: process.env.ETHEREUM_RPC_URL || 'https://mainnet.infura.io/v3/YOUR_INFURA_KEY',
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto'
     },
     bsc: {
-      url: 'https://bsc-dataseed.binance.org',
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      url: process.env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 5000000000, // 5 gwei
+      gas: 'auto'
     },
     polygon: {
-      url: 'https://polygon-rpc.com',
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      url: process.env.POLYGON_RPC_URL || 'https://polygon-rpc.com',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto'
     },
     arbitrum: {
-      url: 'https://arb1.arbitrum.io/rpc',
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      url: process.env.ARBITRUM_RPC_URL || 'https://arb1.arbitrum.io/rpc',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto'
+    },
+    avalanche: {
+      url: process.env.AVALANCHE_RPC_URL || 'https://api.avax.network/ext/bc/C/rpc',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 25000000000, // 25 gwei
+      gas: 'auto',
+      chainId: 43114
+    },
+    fantom: {
+      url: process.env.FANTOM_RPC_URL || 'https://rpc.ftm.tools',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto',
+      chainId: 250
+    },
+    esr: {
+      url: process.env.ESR_RPC_URL || 'https://testnet.rpc.esrscan.com',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto',
+      chainId: 25062019
     }
   },
   paths: {

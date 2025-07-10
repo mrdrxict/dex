@@ -52,6 +52,14 @@ export const TOKENS: Record<number, Token[]> = {
       decimals: 18,
       chainId: 56,
       logoURI: 'https://tokens.1inch.io/0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d.png'
+    },
+    {
+      address: '0x55d398326f99059fF775485246999027B3197955',
+      symbol: 'USDT',
+      name: 'Tether USD',
+      decimals: 18,
+      chainId: 56,
+      logoURI: 'https://tokens.1inch.io/0x55d398326f99059ff775485246999027b3197955.png'
     }
   ],
   // Polygon
@@ -71,6 +79,14 @@ export const TOKENS: Record<number, Token[]> = {
       decimals: 6,
       chainId: 137,
       logoURI: 'https://tokens.1inch.io/0x2791bca1f2de4661ed88a30c99a7a9449aa84174.png'
+    },
+    {
+      address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+      symbol: 'USDT',
+      name: 'Tether USD',
+      decimals: 6,
+      chainId: 137,
+      logoURI: 'https://tokens.1inch.io/0xc2132d05d31c914a87c6611c10748aeb04b58e8f.png'
     }
   ],
   // Arbitrum
@@ -90,6 +106,100 @@ export const TOKENS: Record<number, Token[]> = {
       decimals: 6,
       chainId: 42161,
       logoURI: 'https://tokens.1inch.io/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8.png'
+    },
+    {
+      address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+      symbol: 'USDT',
+      name: 'Tether USD',
+      decimals: 6,
+      chainId: 42161,
+      logoURI: 'https://tokens.1inch.io/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9.png'
+    }
+  ],
+  // Avalanche C-Chain
+  43114: [
+    {
+      address: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+      symbol: 'WAVAX',
+      name: 'Wrapped AVAX',
+      decimals: 18,
+      chainId: 43114,
+      logoURI: 'https://tokens.1inch.io/0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7.png'
+    },
+    {
+      address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+      symbol: 'USDC',
+      name: 'USD Coin',
+      decimals: 6,
+      chainId: 43114,
+      logoURI: 'https://tokens.1inch.io/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e.png'
+    },
+    {
+      address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+      symbol: 'USDT',
+      name: 'Tether USD',
+      decimals: 6,
+      chainId: 43114,
+      logoURI: 'https://tokens.1inch.io/0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7.png'
+    },
+    {
+      address: '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB',
+      symbol: 'WETH.e',
+      name: 'Wrapped Ether',
+      decimals: 18,
+      chainId: 43114,
+      logoURI: 'https://tokens.1inch.io/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab.png'
+    },
+    {
+      address: '0x50b7545627a5162F82A992c33b87aDc75187B218',
+      symbol: 'WBTC.e',
+      name: 'Wrapped Bitcoin',
+      decimals: 8,
+      chainId: 43114,
+      logoURI: 'https://tokens.1inch.io/0x50b7545627a5162f82a992c33b87adc75187b218.png'
+    }
+  ],
+  // Fantom Opera
+  250: [
+    {
+      address: '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83',
+      symbol: 'WFTM',
+      name: 'Wrapped Fantom',
+      decimals: 18,
+      chainId: 250,
+      logoURI: 'https://tokens.1inch.io/0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83.png'
+    },
+    {
+      address: '0x04068DA6C83AFCFA0e13ba15A6696662335D5B75',
+      symbol: 'USDC',
+      name: 'USD Coin',
+      decimals: 6,
+      chainId: 250,
+      logoURI: 'https://tokens.1inch.io/0x04068da6c83afcfa0e13ba15a6696662335d5b75.png'
+    },
+    {
+      address: '0x049d68029688eAbF473097a2fC38ef61633A3C7A',
+      symbol: 'fUSDT',
+      name: 'Frapped USDT',
+      decimals: 6,
+      chainId: 250,
+      logoURI: 'https://tokens.1inch.io/0x049d68029688eabf473097a2fc38ef61633a3c7a.png'
+    },
+    {
+      address: '0x74b23882a30290451A17c44f4F05243b6b58C76d',
+      symbol: 'WETH',
+      name: 'Wrapped Ether',
+      decimals: 18,
+      chainId: 250,
+      logoURI: 'https://tokens.1inch.io/0x74b23882a30290451a17c44f4f05243b6b58c76d.png'
+    },
+    {
+      address: '0x321162Cd933E2Be498Cd2267a90534A804051b11',
+      symbol: 'WBTC',
+      name: 'Wrapped Bitcoin',
+      decimals: 8,
+      chainId: 250,
+      logoURI: 'https://tokens.1inch.io/0x321162cd933e2be498cd2267a90534a804051b11.png'
     }
   ],
   // ESR Testnet

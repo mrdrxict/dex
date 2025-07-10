@@ -38,6 +38,24 @@ export const SUPPORTED_CHAINS = {
     maxGasPrice: '10',
     blockTime: 1000
   },
+  43114: {
+    name: 'Avalanche',
+    rpcUrl: process.env.AVALANCHE_RPC_URL,
+    bridgeAddress: process.env.AVALANCHE_BRIDGE_ADDRESS,
+    minConfirmations: 5,
+    gasLimit: 300000,
+    maxGasPrice: '30', // AVAX gas prices
+    blockTime: 2000
+  },
+  250: {
+    name: 'Fantom',
+    rpcUrl: process.env.FANTOM_RPC_URL,
+    bridgeAddress: process.env.FANTOM_BRIDGE_ADDRESS,
+    minConfirmations: 10,
+    gasLimit: 300000,
+    maxGasPrice: '200', // FTM gas prices (higher number but very cheap)
+    blockTime: 1000
+  },
   // ESR Network (Example custom chain)
   2612: {
     name: 'ESR',

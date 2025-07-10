@@ -41,6 +41,22 @@ export const SUPPORTED_CHAINS: Chain[] = [
     icon: '🔵'
   },
   {
+    id: 43114,
+    name: 'Avalanche',
+    symbol: 'AVAX',
+    rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+    blockExplorer: 'https://snowtrace.io',
+    icon: '🔺'
+  },
+  {
+    id: 250,
+    name: 'Fantom',
+    symbol: 'FTM',
+    rpcUrl: 'https://rpc.ftm.tools',
+    blockExplorer: 'https://ftmscan.com',
+    icon: '👻'
+  },
+  {
     id: 25062019,
     name: 'ESR Testnet',
     symbol: 'ESR',

@@ -59,6 +59,26 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     dxbToken: '0x0000000000000000000000000000000000000000',
     weth: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1'     // WETH on Arbitrum
   },
+  // Avalanche C-Chain
+  43114: {
+    factory: '0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10', // Trader Joe Factory
+    router: '0x60aE616a2155Ee3d9A68541Ba4544862310933d4',  // Trader Joe Router
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'     // WAVAX
+  },
+  // Fantom Opera
+  250: {
+    factory: '0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3', // SpookySwap Factory
+    router: '0xF491e7B69E4244ad4002BC14e878a34207E38c29',  // SpookySwap Router
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83'     // WFTM
+  },
   // ESR Testnet
   25062019: {
     factory: '0x0000000000000000000000000000000000000000',  // Deploy our Factory here
