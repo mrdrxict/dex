@@ -53,23 +53,28 @@ export const useDexContract = () => {
 
   useEffect(() => {
     const initializeContracts = async () => {
-      if (!provider || !chainId) {
+      try {
+        if (!provider || !chainId) {
+          setContracts({ factory: null, router: null })
+          return
+        }
+
+        const addresses = getContractAddresses(chainId)
+        if (!addresses) {
+          setContracts({ factory: null, router: null })
+          return
+        }
+
+        const signer = await provider.getSigner()
+        
+        const factory = new ethers.Contract(addresses.factory, FACTORY_ABI, signer)
+        const router = new ethers.Contract(addresses.router, ROUTER_ABI, signer)
+
+        setContracts({ factory, router })
+      } catch (error) {
+        console.error('Error initializing contracts:', error)
         setContracts({ factory: null, router: null })
-        return
       }
-
-      const addresses = getContractAddresses(chainId)
-      if (!addresses) {
-        setContracts({ factory: null, router: null })
-        return
-      }
-
-      const signer = await provider.getSigner()
-      
-      const factory = new ethers.Contract(addresses.factory, FACTORY_ABI, signer)
-      const router = new ethers.Contract(addresses.router, ROUTER_ABI, signer)
-
-      setContracts({ factory, router })
     }
 
     initializeContracts()
