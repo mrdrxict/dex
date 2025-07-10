@@ -46,6 +46,7 @@ const ChainSelector: React.FC = () => {
             </button>
           ))}
             <span className="font-medium">Unknown Chain ({chainId})</span>
+        </div>
       )}
 
       {isOpen && (
