@@ -63,9 +63,18 @@ export const useBridgeContract = () => {
       return
     }
 
-    const signer = provider.getSigner()
-    const bridge = new ethers.Contract(addresses.bridge, BRIDGE_ABI, signer)
-    setBridgeContract(bridge)
+    const loadContract = async () => {
+      try {
+        const signer = await provider.getSigner()
+        const bridge = new ethers.Contract(addresses.bridge, BRIDGE_ABI, signer)
+        setBridgeContract(bridge)
+      } catch (error) {
+        console.error('Error loading bridge contract:', error)
+        setBridgeContract(null)
+      }
+    }
+
+    loadContract()
   }, [provider, chainId])
 
   const lockTokens = async (
