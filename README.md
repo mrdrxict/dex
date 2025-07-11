@@ -63,6 +63,14 @@ A comprehensive, **fully mobile-optimized** decentralized exchange (DEX) ecosyst
 - **MetaMask** or compatible Web3 wallet
 - **Git**
 
+### Prerequisites
+
+- **Node.js** (v16 or higher)
+- **npm** or **yarn** 
+- **Hardhat** for smart contract deployment
+- **MetaMask** or compatible Web3 wallet
+- **Git**
+
 ### Installation
 
 1. **Clone the repository**
@@ -94,8 +102,93 @@ A comprehensive, **fully mobile-optimized** decentralized exchange (DEX) ecosyst
    npm run dev
    ```
 
-6. **Open your browser**
+6. **Open your browser**  
    Navigate to `http://localhost:5173`
+
+### Alternative: Deploying with Remix IDE
+
+If you encounter issues with Hardhat deployment, you can use Remix IDE as a fallback:
+
+1. **Open Remix IDE**
+   - Go to [https://remix.ethereum.org](https://remix.ethereum.org)
+   - Create a new workspace named "DexBridge"
+
+2. **Upload Contracts**
+   - Create folders in Remix matching the project structure (`DEX`, `Bridge`, `Tokens`, etc.)
+   - Copy each contract from the `remix-contracts` directory into Remix IDE
+
+3. **Compile Contracts**
+   - Set compiler version to `0.8.19`
+   - Enable optimization (200 runs)
+   - Compile all contracts
+
+4. **Deploy in Order**
+   - Connect MetaMask to your desired network
+   - Deploy contracts in this specific order:
+
+     a) **Deploy Tokens**
+     ```
+     1. WETH.sol - No constructor parameters
+        - On Avalanche: Deploy as WAVAX
+        - On Fantom: Deploy as WFTM
+     2. DexBridgeToken.sol - No constructor parameters (for both DXB and USDT)
+     ```
+
+     b) **Deploy DEX**
+     ```
+     1. Factory.sol - No constructor parameters
+     2. Router.sol - Parameters:
+        - _factory: Factory contract address
+        - _WETH: WETH contract address
+        - _usdtToken: USDT contract address
+     ```
+
+     c) **Deploy Staking**
+     ```
+     1. ESRStaking.sol - Parameters:
+        - _esrToken: DXB token address (using as ESR)
+        - _usdtToken: USDT token address
+        - _feeCollector: Router contract address
+        - _rewardPool: Your wallet address
+     ```
+
+     d) **Deploy Bridge**
+     ```
+     1. BridgeCore.sol - Parameters:
+        - _chainId: Current chain ID (1 for Ethereum, 56 for BSC, etc.)
+        - _feeCollector: Your wallet address
+        - _usdtToken: USDT token address
+     ```
+
+     e) **Deploy Farming**
+     ```
+     1. LPFarming.sol - Parameters:
+        - _esrToken: DXB token address
+        - _rewardPool: Your wallet address
+        - _esrPerSecond: Emission rate (e.g., "100000000000000000" for 0.1 ESR/second)
+        - _startTime: Current timestamp
+     ```
+
+5. **Configure Contracts**
+   - Router: `router.setStakingContract(stakingContractAddress)`
+   - Bridge: 
+     ```
+     bridge.setStakingContract(stakingContractAddress)
+     bridge.addSupportedToken(
+         wethAddress,
+         currentChainId,
+         true,  // isNative
+         "1000000000000000",    // 0.001 ETH min
+         "100000000000000000000", // 100 ETH max
+         250    // 2.5% fee
+     )
+     ```
+   - Staking: `staking.setFeeCollector(routerAddress)`
+
+6. **Update Frontend Configuration**
+   - Copy all deployed contract addresses
+   - Update `src/constants/contracts.ts` with the new addresses
+   - Restart the frontend application
 
 ### Environment Setup (Optional)
 
@@ -114,6 +207,73 @@ VITE_ESR_RPC_URL=https://testnet.rpc.esrscan.com
 ```
 
 ## 🏗️ Smart Contract Architecture
+
+### DEX Contracts
+
+#### Factory.sol
+- Creates new trading pairs
+- Manages pair registry
+- Emits PairCreated events
+
+#### Router.sol  
+- Handles all user interactions with $3 USDT fee collection
+- Manages liquidity operations
+- Executes token swaps with fee verification
+- Calculates optimal routing paths
+- Integrates with staking contract for fee distribution
+
+#### Pair.sol
+- Individual trading pair contract
+- Implements AMM (x * y = k) formula
+- Manages LP token minting/burning
+- Handles swap execution
+
+### Bridge Contracts
+
+#### BridgeCore.sol
+- Main bridge contract for each chain with fee collection
+- Handles token locking and releasing
+- Manages supported tokens and fees
+- Controls relayer permissions
+- Collects $3 USDT fees for each bridge transaction
+
+#### DexBridgeWrappedToken.sol
+- Wrapped token contract for non-native assets
+- Mintable/burnable by bridge contract
+- Standard ERC-20 implementation
+
+### Staking & Farming Contracts
+
+#### ESRStaking.sol
+- ESR token staking with 7-day lock period
+- USDT reward distribution from collected fees
+- Proportional reward calculation based on stake weight
+- Real-time APR tracking and reward claims
+- Minimum 100 ESR stake requirement
+
+#### LPFarming.sol
+- Multi-pool LP token farming system
+- ESR token emissions with configurable rates
+- Pool weight management and allocation points
+- Harvest functionality for accumulated rewards
+- Admin controls for pool management
+
+#### FeeManager.sol
+- Centralized fee collection system
+- $3 USDT fee verification and collection
+- Integration with staking contract for reward distribution
+- Fee requirement validation for all operations
+
+### Token Contracts
+
+#### DexBridgeToken.sol (DXB/ESR)
+- Native governance and utility token
+- Used for staking and farming rewards
+- Deflationary tokenomics
+
+#### WETH.sol
+- Wrapped ETH implementation
+- Standard deposit/withdraw functions
 
 ### DEX Contracts
 
@@ -449,6 +609,23 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
 }
 ```
 
+After deployment, update these addresses in `src/constants/contracts.ts`:
+
+```typescript
+export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
+  1: { // Ethereum
+    factory: '0x...', // Your deployed Factory
+    router: '0x...',  // Your deployed Router  
+    bridge: '0x...',  // Your deployed Bridge
+    staking: '0x...', // Your deployed ESR Staking
+    farming: '0x...', // Your deployed LP Farming
+    dxbToken: '0x...', // Your DXB Token
+    weth: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+  }
+  // ... other networks
+}
+```
+
 ## 🌐 Supported Networks
 
 - **Ethereum Mainnet** (Chain ID: 1) ⟠
@@ -485,6 +662,18 @@ Before going live:
 - [ ] **Emergency Procedures**: Establish incident response procedures
 - [ ] **Insurance**: Consider smart contract insurance coverage
 
+Before going live:
+
+- [ ] **Smart Contract Audits**: Get contracts audited by professionals
+- [ ] **Testnet Testing**: Deploy and test on testnets first  
+- [ ] **Multi-sig Setup**: Use multi-signature wallets for admin functions
+- [ ] **Relayer Security**: Secure relayer private keys and infrastructure
+- [ ] **Fee Token Setup**: Ensure USDT contracts are properly configured
+- [ ] **Monitoring**: Set up contract monitoring and alerts
+- [ ] **Documentation**: Update all contract addresses and configurations
+- [ ] **Emergency Procedures**: Establish incident response procedures
+- [ ] **Insurance**: Consider smart contract insurance coverage
+
 ## 🤝 Support & Community
 
 ### Getting Help
@@ -499,6 +688,33 @@ Before going live:
 - Follow coding standards
 
 ## ⚠️ Important Disclaimers
+
+### Security Notice
+⚠️ **CRITICAL**: This is a complex DeFi system handling real value. Before mainnet deployment:
+- **GET PROFESSIONAL AUDITS** for all smart contracts
+- **TEST EXTENSIVELY** on testnets with real scenarios
+- **USE MULTI-SIGNATURE** wallets for all admin functions
+- **IMPLEMENT MONITORING** for all contract interactions
+- **HAVE EMERGENCY PROCEDURES** ready for incident response
+- **SECURE RELAYER INFRASTRUCTURE** with proper key management
+
+### Legal Disclaimer
+This software is provided "as is" without warranty of any kind. Users assume all risks associated with:
+- Smart contract vulnerabilities
+- Bridge failures or delays  
+- Loss of funds due to bugs or exploits
+- Regulatory compliance in their jurisdiction
+- Fee collection and staking mechanisms
+
+The developers are not responsible for any financial losses, legal issues, or other damages arising from the use of this software.
+
+### Regulatory Compliance
+Users are responsible for ensuring compliance with local laws and regulations regarding:
+- Cryptocurrency trading and exchange
+- Cross-border financial transfers
+- Tax reporting and obligations
+- KYC/AML requirements where applicable
+- Staking and farming activities
 
 ### Security Notice
 ⚠️ **CRITICAL**: This is a complex DeFi system handling real value. Before mainnet deployment:
@@ -561,3 +777,58 @@ Users are responsible for ensuring compliance with local laws and regulations re
 - 🔄 Advanced security features
 - 🔄 Global expansion
 - 🔄 Mobile-first feature innovations
+
+## 🔧 Troubleshooting
+
+### Hardhat Deployment Issues
+
+If you encounter issues with Hardhat deployment:
+
+1. **Check Network Configuration**
+   - Verify RPC URLs in `hardhat.config.js`
+   - Ensure private key is correctly set
+   - Check network connectivity
+
+2. **Gas Issues**
+   - Adjust gas settings in `hardhat.config.js`
+   - Ensure wallet has sufficient funds
+
+3. **Contract Size Limits**
+   - If contracts exceed size limits, try enabling optimization
+   - Split large contracts if necessary
+
+4. **Use Remix IDE Alternative**
+   - Follow the "Alternative: Deploying with Remix IDE" section above
+   - This provides a more visual, step-by-step approach
+
+### Frontend Connection Issues
+
+If the frontend can't connect to contracts:
+
+1. **Check Contract Addresses**
+   - Verify addresses in `src/constants/contracts.ts`
+   - Ensure they match deployed contracts
+
+2. **Network Mismatch**
+   - Make sure wallet is connected to the correct network
+   - Check chainId matches in configuration
+
+3. **ABI Issues**
+   - Verify ABIs match deployed contract versions
+   - Regenerate ABIs if necessary
+
+### Mobile-Specific Issues
+
+For mobile-specific problems:
+
+1. **Wallet Connection**
+   - Use WalletConnect for better mobile compatibility
+   - Ensure deep linking is properly configured
+
+2. **UI Rendering**
+   - Test on multiple device sizes
+   - Use browser developer tools to simulate different devices
+
+3. **Performance**
+   - Reduce bundle size for faster loading on mobile
+   - Optimize images and assets
