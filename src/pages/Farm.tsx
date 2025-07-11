@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Sprout, TrendingUp, DollarSign, Clock } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
-import { isTestnet } from '../constants/chains'
 import { useFarmingContract } from '../hooks/useFarmingContract'
 import TestnetBadge from '../components/TestnetBadge'
+import NetworkSwitcher from '../components/NetworkSwitcher'
 
 interface Pool {
   id: number
@@ -17,7 +17,11 @@ interface Pool {
   pendingRewards: string
 }
 
-const Farm: React.FC = () => {
+interface FarmProps {
+  testnetMode: boolean;
+}
+
+const Farm: React.FC<FarmProps> = ({ testnetMode }) => {
   const { isConnected, account } = useWallet()
   const { 
     deposit, 

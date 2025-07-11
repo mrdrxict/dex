@@ -2,8 +2,13 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ArrowLeftRight, Droplets, Grid as Bridge, BarChart3, Gift, Sprout, Shield, Menu, X } from 'lucide-react'
 import { useWallet } from '../../contexts/WalletContext'
+import { isTestnetChain } from '../../constants/chainConfig'
 
-const Navigation: React.FC = () => {
+interface NavigationProps {
+  testnetMode: boolean;
+}
+
+const Navigation: React.FC<NavigationProps> = ({ testnetMode }) => {
   const { account } = useWallet()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   
@@ -18,6 +23,12 @@ const Navigation: React.FC = () => {
 
   // Mock admin check - replace with actual owner verification
   const isAdmin = account === '0x...' // Replace with actual admin check
+  
+  // Add testnet indicator to navigation items when in testnet mode
+  const navItemsWithMode = navItems.map(item => ({
+    ...item,
+    label: testnetMode ? `${item.label} ${item === 'Bridge' ? '(Testnet)' : ''}` : item.label
+  }));
 
   return (
     <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -37,8 +48,8 @@ const Navigation: React.FC = () => {
         
         {/* Desktop navigation */}
         <div className="hidden md:flex justify-center">
-          <div className="flex space-x-8">
-            {navItems.map(({ path, label, icon: Icon }) => (
+          <div className="flex space-x-6">
+            {navItemsWithMode.map(({ path, label, icon: Icon }) => (
               <NavLink
                 key={path}
                 to={path}
@@ -76,7 +87,7 @@ const Navigation: React.FC = () => {
         {/* Mobile navigation menu */}
         {isMenuOpen && (
           <div className="md:hidden py-2 space-y-1">
-            {navItems.map(({ path, label, icon: Icon }) => (
+            {navItemsWithMode.map(({ path, label, icon: Icon }) => (
               <NavLink
                 key={path}
                 to={path}

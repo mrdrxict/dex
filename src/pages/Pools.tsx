@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import { Plus, Droplets } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
-import { isTestnet } from '../constants/chains'
 import { useDexContract } from '../hooks/useDexContract'
 import { getTokensByChain } from '../constants/tokens'
 import TestnetBadge from '../components/TestnetBadge'
+import NetworkSwitcher from '../components/NetworkSwitcher'
 
-const Pools: React.FC = () => {
+interface PoolsProps {
+  testnetMode: boolean;
+}
+
+const Pools: React.FC<PoolsProps> = ({ testnetMode }) => {
   const { isConnected, chainId } = useWallet()
   const { addLiquidity, getPairAddress, createPair } = useDexContract()
   const [activeTab, setActiveTab] = useState<'pools' | 'positions'>('pools')

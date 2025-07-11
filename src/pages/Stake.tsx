@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Lock, Gift, TrendingUp, Users, DollarSign } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
-import { isTestnet } from '../constants/chains'
 import { useStakingContract } from '../hooks/useStakingContract'
 import TestnetBadge from '../components/TestnetBadge'
+import NetworkSwitcher from '../components/NetworkSwitcher'
 
-const Stake: React.FC = () => {
+interface StakeProps {
+  testnetMode: boolean;
+}
+
+const Stake: React.FC<StakeProps> = ({ testnetMode }) => {
   const { isConnected, account } = useWallet()
   const { 
     stakeESR, 

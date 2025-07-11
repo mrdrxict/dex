@@ -1,23 +1,51 @@
 import React, { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { useWallet } from '../../contexts/WalletContext'
-import { SUPPORTED_CHAINS, MAINNET_CHAINS, TESTNET_CHAINS, getChainById, isTestnet } from '../../constants/chains'
+import { CHAIN_CONFIG, getChainName, isTestnetChain } from '../../constants/chainConfig'
 
 const ChainSelector: React.FC = () => {
   const { chainId, switchChain } = useWallet()
   const [isOpen, setIsOpen] = useState(false)
   const [showTestnets, setShowTestnets] = useState(false)
 
-  const currentChain = chainId ? getChainById(chainId) : null
-  const currentIsTestnet = chainId ? isTestnet(chainId) : false
+  // Get current chain info
+  const currentChainConfig = chainId ? CHAIN_CONFIG[chainId] : null
+  const currentIsTestnet = chainId ? isTestnetChain(chainId) : false
 
   const handleChainSelect = async (targetChainId: number) => {
     await switchChain(targetChainId)
     setIsOpen(false)
   }
 
-  // Filter chains based on testnet toggle
-  const displayedChains = showTestnets ? TESTNET_CHAINS : MAINNET_CHAINS;
+  // Get chains based on testnet toggle
+  const displayedChains = Object.entries(CHAIN_CONFIG)
+    .filter(([_, config]) => config.isTestnet === showTestnets)
+    .map(([id, config]) => ({
+      id: parseInt(id),
+      name: config.chainName,
+      icon: getChainIcon(parseInt(id)),
+      isTestnet: config.isTestnet
+    }));
+
+  // Helper function to get chain icon
+  function getChainIcon(chainId: number) {
+    const icons: Record<number, string> = {
+      1: '⟠', // Ethereum
+      5: '⟠', // Goerli
+      56: '🟡', // BSC
+      97: '🟡', // BSC Testnet
+      137: '🟣', // Polygon
+      80001: '🟣', // Mumbai
+      42161: '🔵', // Arbitrum
+      43114: '🔺', // Avalanche
+      43113: '🔺', // Fuji
+      250: '👻', // Fantom
+      4002: '👻', // Fantom Testnet
+      2612: '🟢', // ESR Mainnet
+      25062019: '🟢', // ESR Testnet
+    };
+    return icons[chainId] || '🔗';
+  }
 
   return (
     <div className="relative">
@@ -25,11 +53,11 @@ const ChainSelector: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors"
       >
-        {currentChain ? (
+        {currentChainConfig ? (
           <>
-            <span className="text-lg">{currentChain.icon}</span>
+            <span className="text-lg">{getChainIcon(chainId)}</span>
             <span className="font-medium flex items-center">
-              {currentChain.name}
+              {currentChainConfig.chainName}
               {currentIsTestnet && (
                 <span className="ml-1 text-xs px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full">
                   Testnet
@@ -58,7 +86,7 @@ const ChainSelector: React.FC = () => {
           </div>
           
           <div className="max-h-60 overflow-y-auto">
-            {displayedChains.map((chain) => (
+            {displayedChains.map(chain => (
               <button
                 key={chain.id}
                 onClick={() => handleChainSelect(chain.id)}
@@ -77,7 +105,7 @@ const ChainSelector: React.FC = () => {
                 )}
               </button>
             ))}
-            {chainId && !getChainById(chainId) && (
+            {chainId && !CHAIN_CONFIG[chainId] && (
               <div className="px-3 py-2 text-gray-500 dark:text-gray-400">
                 Unknown Chain ({chainId})
               </div>

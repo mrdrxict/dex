@@ -1,12 +1,17 @@
 import React from 'react'
 import { TrendingUp, DollarSign, Users, Activity } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
-import { isTestnet } from '../constants/chains'
+import { isTestnetChain } from '../constants/chainConfig'
 import TestnetBadge from '../components/TestnetBadge'
+import NetworkSwitcher from '../components/NetworkSwitcher'
 
-const Analytics: React.FC = () => {
+interface AnalyticsProps {
+  testnetMode: boolean;
+}
+
+const Analytics: React.FC<AnalyticsProps> = ({ testnetMode }) => {
   const { chainId } = useWallet()
-  const currentIsTestnet = chainId ? isTestnet(chainId) : false;
+  const currentIsTestnet = chainId ? isTestnetChain(chainId) : false;
 
   const stats = [
     {

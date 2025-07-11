@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import { ArrowUpDown, Settings, AlertCircle, X } from 'lucide-react'
 import { Token } from '../constants/tokens'
-import { isTestnet } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
 import { useDexContract } from '../hooks/useDexContract'
 import TokenSelector from '../components/TokenSelector'
 import TestnetBadge from '../components/TestnetBadge'
+import NetworkSwitcher from '../components/NetworkSwitcher'
 
-const Swap: React.FC = () => {
+interface SwapProps {
+  testnetMode: boolean;
+}
+
+const Swap: React.FC<SwapProps> = ({ testnetMode }) => {
   const { isConnected, account, chainId } = useWallet()
   const { 
     swapExactTokensForTokens, 

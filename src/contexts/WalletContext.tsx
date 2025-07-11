@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
+import { CHAIN_CONFIG } from '../constants/chainConfig'
 
 // Extend Window interface for TypeScript
 declare global {
@@ -16,7 +17,7 @@ interface WalletContextType {
   isConnecting: boolean
   connectWallet: () => Promise<void>
   disconnectWallet: () => void
-  switchChain: (chainId: number) => Promise<void>
+  switchChain: (chainId: number) => Promise<boolean>
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
@@ -76,119 +77,53 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     localStorage.removeItem('walletConnected')
   }
 
-  const switchChain = async (targetChainId: number) => {
+  const switchChain = async (targetChainId: number): Promise<boolean> => {
     if (!window.ethereum) return
 
-    const hexChainId = `0x${targetChainId.toString(16)}`
+    const chainConfig = CHAIN_CONFIG[targetChainId]
+    if (!chainConfig) {
+      console.error(`Chain configuration not found for chain ID: ${targetChainId}`)
+      return false
+    }
+
+    const hexChainId = chainConfig.chainId
 
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }],
       })
+      return true
     } catch (error: any) {
       if (error.code === 4902) {
         // Chain not added to wallet
         try {
-          // Get chain info to add
-          const chainInfo = getChainAddParams(targetChainId)
-          if (chainInfo) {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [chainInfo],
-            })
-          }
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: chainConfig.chainId,
+              chainName: chainConfig.chainName,
+              nativeCurrency: chainConfig.nativeCurrency,
+              rpcUrls: chainConfig.rpcUrls,
+              blockExplorerUrls: chainConfig.blockExplorerUrls
+            }]
+          })
+          
+          // Try switching again after adding
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: hexChainId }],
+          })
+          
+          return true
         } catch (addError) {
           console.error('Failed to add chain to wallet:', addError)
+          return false
         }
       }
+      console.error('Failed to switch chain:', error)
+      return false
     }
-  }
-
-  // Helper function to get chain parameters for adding to wallet
-  const getChainAddParams = (chainId: number) => {
-    const chains: Record<number, any> = {
-      1: {
-        chainId: '0x1',
-        chainName: 'Ethereum Mainnet',
-        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-        rpcUrls: ['https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
-        blockExplorerUrls: ['https://etherscan.io'],
-      },
-      56: {
-        chainId: '0x38',
-        chainName: 'Binance Smart Chain',
-        nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-        rpcUrls: ['https://bsc-dataseed.binance.org'],
-        blockExplorerUrls: ['https://bscscan.com'],
-      },
-      137: {
-        chainId: '0x89',
-        chainName: 'Polygon Mainnet',
-        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-        rpcUrls: ['https://polygon-rpc.com'],
-        blockExplorerUrls: ['https://polygonscan.com'],
-      },
-      42161: {
-        chainId: '0xa4b1',
-        chainName: 'Arbitrum One',
-        nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
-        rpcUrls: ['https://arb1.arbitrum.io/rpc'],
-        blockExplorerUrls: ['https://arbiscan.io'],
-      },
-      43114: {
-        chainId: '0xa86a',
-        chainName: 'Avalanche C-Chain',
-        nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
-        rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-        blockExplorerUrls: ['https://snowtrace.io'],
-      },
-      250: {
-        chainId: '0xfa',
-        chainName: 'Fantom Opera',
-        nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
-        rpcUrls: ['https://rpc.ftm.tools'],
-        blockExplorerUrls: ['https://ftmscan.com'],
-      },
-      // Testnets
-      5: {
-        chainId: '0x5',
-        chainName: 'Goerli Testnet',
-        nativeCurrency: { name: 'Goerli Ether', symbol: 'ETH', decimals: 18 },
-        rpcUrls: ['https://rpc.ankr.com/eth_goerli'],
-        blockExplorerUrls: ['https://goerli.etherscan.io'],
-      },
-      97: {
-        chainId: '0x61',
-        chainName: 'BSC Testnet',
-        nativeCurrency: { name: 'Binance Chain Native Token', symbol: 'tBNB', decimals: 18 },
-        rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
-        blockExplorerUrls: ['https://testnet.bscscan.com'],
-      },
-      80001: {
-        chainId: '0x13881',
-        chainName: 'Mumbai Testnet',
-        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
-        rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
-        blockExplorerUrls: ['https://mumbai.polygonscan.com'],
-      },
-      43113: {
-        chainId: '0xa869',
-        chainName: 'Avalanche Fuji Testnet',
-        nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
-        rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
-        blockExplorerUrls: ['https://testnet.snowtrace.io'],
-      },
-      4002: {
-        chainId: '0xfa2',
-        chainName: 'Fantom Testnet',
-        nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
-        rpcUrls: ['https://rpc.testnet.fantom.network'],
-        blockExplorerUrls: ['https://testnet.ftmscan.com'],
-      },
-    }
-    
-    return chains[chainId]
   }
 
   useEffect(() => {
@@ -214,6 +149,35 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       }
     }
   }, [])
+
+  // Check if the current chain matches the testnet mode
+  const ensureCorrectChainType = async (testnetMode: boolean) => {
+    if (!window.ethereum || !isConnected) return false;
+    
+    try {
+      const currentChainId = chainId;
+      if (!currentChainId) return false;
+      
+      const currentConfig = CHAIN_CONFIG[currentChainId];
+      if (!currentConfig) return false;
+      
+      // If already on the correct chain type, return true
+      if (currentConfig.isTestnet === testnetMode) return true;
+      
+      // Find the first chain of the correct type
+      const targetChains = Object.keys(CHAIN_CONFIG)
+        .filter(id => CHAIN_CONFIG[id].isTestnet === testnetMode)
+        .map(id => parseInt(id));
+      
+      if (targetChains.length === 0) return false;
+      
+      // Switch to the first available chain of the correct type
+      return await switchChain(targetChains[0]);
+    } catch (error) {
+      console.error('Failed to ensure correct chain type:', error);
+      return false;
+    }
+  };
 
   // Auto-connect on page load if previously connected
   useEffect(() => {
@@ -248,7 +212,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         isConnecting,
         connectWallet,
         disconnectWallet,
-        switchChain,
+        switchChain, 
+        ensureCorrectChainType
       }}
     >
       {children}
