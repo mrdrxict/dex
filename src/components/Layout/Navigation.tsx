@@ -114,7 +114,6 @@ const Navigation: React.FC = () => {
             )}
           </div>
         )}
-        </div>
       </div>
     </nav>
   )
