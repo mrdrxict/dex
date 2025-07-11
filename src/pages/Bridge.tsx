@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Grid as BridgeIcon, ArrowRight, Clock, AlertCircle } from 'lucide-react'
-import { SUPPORTED_CHAINS } from '../constants/chains'
+import { SUPPORTED_CHAINS, MAINNET_CHAINS, TESTNET_CHAINS, isTestnet } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
 import { useBridgeContract } from '../hooks/useBridgeContract'
 
@@ -14,9 +14,14 @@ const Bridge: React.FC = () => {
   const [destinationAddress, setDestinationAddress] = useState('')
   const [selectedToken, setSelectedToken] = useState('0xA0b86a33E6441b8C4505B6B8C0E4F7c4E4B8C4F5') // USDC
   const [bridgeFee, setBridgeFee] = useState('0')
+  const [showTestnets, setShowTestnets] = useState(false)
   const [isBridging, setIsBridging] = useState(false)
   const [userTransactions, setUserTransactions] = useState<string[]>([])
   const [feeWarning, setFeeWarning] = useState('')
+
+  // Filter chains based on testnet toggle
+  const displayedChains = showTestnets ? TESTNET_CHAINS : MAINNET_CHAINS;
+  const currentChainIsTestnet = chainId ? isTestnet(chainId) : false;
 
   React.useEffect(() => {
     if (amount && selectedToken) {
@@ -114,9 +119,27 @@ const Bridge: React.FC = () => {
         <div className="flex items-center space-x-2 mb-6">
           <BridgeIcon className="w-6 h-6" />
           <h2 className="text-xl font-bold">Cross-Chain Bridge</h2>
+          {currentChainIsTestnet && (
+            <span className="ml-2 text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full">
+              Testnet Mode
+            </span>
+          )}
         </div>
 
         <div className="space-y-6">
+          {/* Testnet Toggle */}
+          <div className="flex items-center justify-between">
+            <label className="flex items-center text-sm">
+              <input 
+                type="checkbox" 
+                checked={showTestnets} 
+                onChange={() => setShowTestnets(!showTestnets)}
+                className="mr-2"
+              />
+              <span className="text-gray-700 dark:text-gray-300">Show Testnets Only</span>
+            </label>
+          </div>
+
           {/* Chain Selection */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div>
@@ -128,9 +151,9 @@ const Bridge: React.FC = () => {
                 onChange={(e) => setFromChain(SUPPORTED_CHAINS.find(c => c.id === Number(e.target.value))!)}
                 className="input-field"
               >
-                {SUPPORTED_CHAINS.map((chain) => (
+                {displayedChains.map((chain) => (
                   <option key={chain.id} value={chain.id}>
-                    {chain.icon} {chain.name}
+                    {chain.icon} {chain.name} {chain.isTestnet ? '(Testnet)' : ''}
                   </option>
                 ))}
               </select>
@@ -149,9 +172,9 @@ const Bridge: React.FC = () => {
                 onChange={(e) => setToChain(SUPPORTED_CHAINS.find(c => c.id === Number(e.target.value))!)}
                 className="input-field"
               >
-                {SUPPORTED_CHAINS.filter(c => c.id !== fromChain.id).map((chain) => (
+                {displayedChains.filter(c => c.id !== fromChain.id).map((chain) => (
                   <option key={chain.id} value={chain.id}>
-                    {chain.icon} {chain.name}
+                    {chain.icon} {chain.name} {chain.isTestnet ? '(Testnet)' : ''}
                   </option>
                 ))}
               </select>

@@ -79,6 +79,56 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
     weth: '0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83'     // WFTM
   },
+  // Ethereum Goerli Testnet
+  5: {
+    factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
+    router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'     // Goerli WETH
+  },
+  // BSC Testnet
+  97: {
+    factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
+    router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd'     // BSC Testnet WBNB
+  },
+  // Polygon Mumbai
+  80001: {
+    factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
+    router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'     // Mumbai WMATIC
+  },
+  // Avalanche Fuji
+  43113: {
+    factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
+    router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c'     // Fuji WAVAX
+  },
+  // Fantom Testnet
+  4002: {
+    factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
+    router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
+    bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xf1277d1Ed8AD466beddF92ef448A132661956621'     // Fantom Testnet WFTM
+  },
   // ESR Testnet
   25062019: {
     factory: '0x0000000000000000000000000000000000000000',  // Deploy our Factory here

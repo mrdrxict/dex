@@ -1,7 +1,13 @@
 import React from 'react'
 import { TrendingUp, DollarSign, Users, Activity } from 'lucide-react'
+import { useWallet } from '../contexts/WalletContext'
+import { isTestnet } from '../constants/chains'
+import TestnetBadge from '../components/TestnetBadge'
 
 const Analytics: React.FC = () => {
+  const { chainId } = useWallet()
+  const currentIsTestnet = chainId ? isTestnet(chainId) : false;
+
   const stats = [
     {
       title: 'Total Value Locked',
@@ -42,7 +48,18 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Analytics Dashboard</h1>
+      <div className="flex items-center mb-8">
+        <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
+        <TestnetBadge className="ml-2" />
+      </div>
+
+      {currentIsTestnet && (
+        <div className="card p-4 mb-6 bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800">
+          <p className="text-purple-800 dark:text-purple-200">
+            <strong>Testnet Mode:</strong> You are viewing analytics for testnet data. These numbers are for testing purposes only.
+          </p>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

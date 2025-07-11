@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Sprout, TrendingUp, DollarSign, Clock } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
+import { isTestnet } from '../constants/chains'
 import { useFarmingContract } from '../hooks/useFarmingContract'
+import TestnetBadge from '../components/TestnetBadge'
 
 interface Pool {
   id: number
@@ -211,7 +213,10 @@ const Farm: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">LP Farming</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold">LP Farming</h1>
+          <TestnetBadge className="ml-2" />
+        </div>
         <div className="flex items-center space-x-4">
           <div className="card p-4">
             <div className="text-center">

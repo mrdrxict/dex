@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Plus, Droplets } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
+import { isTestnet } from '../constants/chains'
 import { useDexContract } from '../hooks/useDexContract'
 import { getTokensByChain } from '../constants/tokens'
+import TestnetBadge from '../components/TestnetBadge'
 
 const Pools: React.FC = () => {
   const { isConnected, chainId } = useWallet()
@@ -74,7 +76,10 @@ const Pools: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-        <h1 className="text-3xl font-bold">Liquidity Pools</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold">Liquidity Pools</h1>
+          <TestnetBadge className="ml-2" />
+        </div>
         <button 
           onClick={() => setShowAddLiquidity(true)}
           className="btn-primary flex items-center space-x-2 self-start"

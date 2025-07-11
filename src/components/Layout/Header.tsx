@@ -2,12 +2,14 @@ import React from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useWallet } from '../../contexts/WalletContext'
+import { isTestnet } from '../../constants/chains'
 import WalletButton from '../Wallet/WalletButton'
 import ChainSelector from '../Wallet/ChainSelector'
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme()
-  const { isConnected } = useWallet()
+  const { isConnected, chainId } = useWallet()
+  const currentIsTestnet = chainId ? isTestnet(chainId) : false;
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -20,6 +22,11 @@ const Header: React.FC = () => {
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               DexBridge
             </h1>
+            {currentIsTestnet && (
+              <span className="ml-2 text-xs px-2 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full">
+                Testnet
+              </span>
+            )}
           </div>
 
           <div className="flex items-center space-x-4">

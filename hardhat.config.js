@@ -60,6 +60,39 @@ module.exports = {
       gas: 'auto',
       chainId: 250
     },
+    // Testnets
+    goerli: {
+      url: process.env.GOERLI_RPC_URL || 'https://rpc.ankr.com/eth_goerli',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto'
+    },
+    bscTestnet: {
+      url: process.env.BSC_TESTNET_RPC_URL || 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 5000000000, // 5 gwei
+      gas: 'auto'
+    },
+    mumbai: {
+      url: process.env.MUMBAI_RPC_URL || 'https://rpc-mumbai.maticvigil.com',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto'
+    },
+    fuji: {
+      url: process.env.FUJI_RPC_URL || 'https://api.avax-test.network/ext/bc/C/rpc',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 25000000000, // 25 gwei
+      gas: 'auto',
+      chainId: 43113
+    },
+    fantomTestnet: {
+      url: process.env.FANTOM_TESTNET_RPC_URL || 'https://rpc.testnet.fantom.network',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+      gas: 'auto',
+      chainId: 4002
+    },
     esr: {
       url: process.env.ESR_RPC_URL || 'https://testnet.rpc.esrscan.com',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],

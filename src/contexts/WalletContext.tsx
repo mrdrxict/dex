@@ -150,6 +150,42 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         rpcUrls: ['https://rpc.ftm.tools'],
         blockExplorerUrls: ['https://ftmscan.com'],
       },
+      // Testnets
+      5: {
+        chainId: '0x5',
+        chainName: 'Goerli Testnet',
+        nativeCurrency: { name: 'Goerli Ether', symbol: 'ETH', decimals: 18 },
+        rpcUrls: ['https://rpc.ankr.com/eth_goerli'],
+        blockExplorerUrls: ['https://goerli.etherscan.io'],
+      },
+      97: {
+        chainId: '0x61',
+        chainName: 'BSC Testnet',
+        nativeCurrency: { name: 'Binance Chain Native Token', symbol: 'tBNB', decimals: 18 },
+        rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
+        blockExplorerUrls: ['https://testnet.bscscan.com'],
+      },
+      80001: {
+        chainId: '0x13881',
+        chainName: 'Mumbai Testnet',
+        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+        rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+        blockExplorerUrls: ['https://mumbai.polygonscan.com'],
+      },
+      43113: {
+        chainId: '0xa869',
+        chainName: 'Avalanche Fuji Testnet',
+        nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
+        rpcUrls: ['https://api.avax-test.network/ext/bc/C/rpc'],
+        blockExplorerUrls: ['https://testnet.snowtrace.io'],
+      },
+      4002: {
+        chainId: '0xfa2',
+        chainName: 'Fantom Testnet',
+        nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
+        rpcUrls: ['https://rpc.testnet.fantom.network'],
+        blockExplorerUrls: ['https://testnet.ftmscan.com'],
+      },
     }
     
     return chains[chainId]

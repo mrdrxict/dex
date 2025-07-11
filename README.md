@@ -363,18 +363,24 @@ DexBridge is fully optimized for mobile devices with:
 
 ### Getting Started
 
-1. **Connect Your Wallet**
+1. **Choose Network Type**
+   - Toggle between Mainnet and Testnet networks using the "Show Testnets" option
+   - Testnet networks are clearly marked with a "Testnet" badge
+
+2. **Connect Your Wallet**
    - Tap "Connect Wallet" in the top right
    - Select your preferred wallet (works with both mobile and desktop wallets)
    - Approve the connection
 
-2. **Select Network**
+3. **Select Network**
    - Use the chain selector to switch between networks
    - Ensure contracts are deployed on selected network
+   - Testnet networks are clearly labeled with a "Testnet" badge
 
-3. **Prepare USDT for Fees**
+4. **Prepare USDT for Fees**
    - Ensure you have at least $3 USDT for transaction fees
    - Approve USDT spending for the router/bridge contracts
+   - For testnets, use the appropriate testnet USDT address
 
 ### Token Swapping
 
@@ -406,15 +412,18 @@ DexBridge is fully optimized for mobile devices with:
 
 ### Cross-Chain Bridging
 
-1. **Navigate to Bridge tab**
-2. **Configure Your Transfer**
+1. **Navigate to Bridge Tab**
+2. **Select Network Type**
+   - Toggle "Show Testnets Only" to filter for testnet networks
+   - Mainnet and testnet bridges are separate (cannot bridge between mainnet and testnet)
+3. **Configure Your Transfer**
    - Select source and destination chains
    - Choose token and amount
    - Enter destination address (optional)
-3. **Review Fees**
+4. **Review Fees**
    - Bridge fee in tokens
    - $3 USDT transaction fee
-4. **Execute Bridge**
+5. **Execute Bridge**
    - Ensure sufficient USDT balance and approval
    - Confirm transaction
    - Wait for relayer to process on destination chain
@@ -628,12 +637,20 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
 
 ## 🌐 Supported Networks
 
+### Mainnets
 - **Ethereum Mainnet** (Chain ID: 1) ⟠
 - **BSC Mainnet** (Chain ID: 56) 🟡
 - **Polygon Mainnet** (Chain ID: 137) 🟣
 - **Arbitrum One** (Chain ID: 42161) 🔵
 - **Avalanche C-Chain** (Chain ID: 43114) 🔺
 - **Fantom Opera** (Chain ID: 250) 👻
+
+### Testnets
+- **Ethereum Goerli** (Chain ID: 5) ⟠
+- **BSC Testnet** (Chain ID: 97) 🟡
+- **Polygon Mumbai** (Chain ID: 80001) 🟣
+- **Avalanche Fuji** (Chain ID: 43113) 🔺
+- **Fantom Testnet** (Chain ID: 4002) 👻
 - **ESR Testnet** (Chain ID: 25062019) 🟢
 
 ## 💰 Fee Structure

@@ -112,18 +112,37 @@ async function main() {
   console.log('- WETH:', await weth.getAddress())
 
   // Chain-specific notes
-  if (chainId === 43114) {
+  if (chainId === 43114 || chainId === 43113) {
     console.log('\n🔺 AVALANCHE DEPLOYMENT NOTES:')
     console.log('- Native token: AVAX')
     console.log('- Wrapped token: WAVAX')
     console.log('- Consider integrating with Trader Joe DEX')
     console.log('- Gas fees are typically low on Avalanche')
-  } else if (chainId === 250) {
+    if (chainId === 43113) {
+      console.log('- TESTNET: This is Fuji (Avalanche Testnet)')
+    }
+  } else if (chainId === 250 || chainId === 4002) {
     console.log('\n👻 FANTOM DEPLOYMENT NOTES:')
     console.log('- Native token: FTM')
     console.log('- Wrapped token: WFTM')
     console.log('- Consider integrating with SpookySwap DEX')
     console.log('- Very low gas fees on Fantom')
+    if (chainId === 4002) {
+      console.log('- TESTNET: This is Fantom Testnet')
+    }
+  } else if (chainId === 5) {
+    console.log('\n⟠ GOERLI DEPLOYMENT NOTES:')
+    console.log('- TESTNET: This is Ethereum Goerli Testnet')
+    console.log('- Use faucets to get test ETH')
+    console.log('- Goerli will be deprecated soon, consider Sepolia for future deployments')
+  } else if (chainId === 97) {
+    console.log('\n🟡 BSC TESTNET DEPLOYMENT NOTES:')
+    console.log('- TESTNET: This is Binance Smart Chain Testnet')
+    console.log('- Use BSC faucet to get test BNB')
+  } else if (chainId === 80001) {
+    console.log('\n🟣 MUMBAI DEPLOYMENT NOTES:')
+    console.log('- TESTNET: This is Polygon Mumbai Testnet')
+    console.log('- Use Mumbai faucet to get test MATIC')
   }
 }
 

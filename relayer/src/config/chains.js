@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const SUPPORTED_CHAINS = {
+  // Mainnets
   1: {
     name: 'Ethereum',
     rpcUrl: process.env.ETHEREUM_RPC_URL,
@@ -75,6 +76,52 @@ export const SUPPORTED_CHAINS = {
     gasLimit: 200000,
     maxGasPrice: '1',
     blockTime: 3000
+  }
+  // Testnets
+  5: {
+    name: 'Goerli',
+    rpcUrl: process.env.GOERLI_RPC_URL,
+    bridgeAddress: process.env.GOERLI_BRIDGE_ADDRESS,
+    minConfirmations: 5,
+    gasLimit: 500000,
+    maxGasPrice: '50', // gwei
+    blockTime: 15000 // ms
+  },
+  97: {
+    name: 'BSC Testnet',
+    rpcUrl: process.env.BSC_TESTNET_RPC_URL,
+    bridgeAddress: process.env.BSC_TESTNET_BRIDGE_ADDRESS,
+    minConfirmations: 10,
+    gasLimit: 300000,
+    maxGasPrice: '10',
+    blockTime: 3000
+  },
+  80001: {
+    name: 'Mumbai',
+    rpcUrl: process.env.MUMBAI_RPC_URL,
+    bridgeAddress: process.env.MUMBAI_BRIDGE_ADDRESS,
+    minConfirmations: 10,
+    gasLimit: 300000,
+    maxGasPrice: '30',
+    blockTime: 2000
+  },
+  43113: {
+    name: 'Fuji',
+    rpcUrl: process.env.FUJI_RPC_URL,
+    bridgeAddress: process.env.FUJI_BRIDGE_ADDRESS,
+    minConfirmations: 3,
+    gasLimit: 300000,
+    maxGasPrice: '25',
+    blockTime: 2000
+  },
+  4002: {
+    name: 'Fantom Testnet',
+    rpcUrl: process.env.FANTOM_TESTNET_RPC_URL,
+    bridgeAddress: process.env.FANTOM_TESTNET_BRIDGE_ADDRESS,
+    minConfirmations: 5,
+    gasLimit: 300000,
+    maxGasPrice: '100', // FTM gas prices (higher number but very cheap)
+    blockTime: 1000
   }
 };
 

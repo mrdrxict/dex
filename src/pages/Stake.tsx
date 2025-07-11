@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Lock, Gift, TrendingUp, Users, DollarSign } from 'lucide-react'
 import { useWallet } from '../contexts/WalletContext'
+import { isTestnet } from '../constants/chains'
 import { useStakingContract } from '../hooks/useStakingContract'
+import TestnetBadge from '../components/TestnetBadge'
 
 const Stake: React.FC = () => {
   const { isConnected, account } = useWallet()
@@ -172,7 +174,10 @@ const Stake: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">ESR Staking</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold">ESR Staking</h1>
+          <TestnetBadge className="ml-2" />
+        </div>
         <div className="card p-4">
           <div className="text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">Your Pending Rewards</p>

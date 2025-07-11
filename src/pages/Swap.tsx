@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { ArrowUpDown, Settings, AlertCircle, X } from 'lucide-react'
 import { Token } from '../constants/tokens'
+import { isTestnet } from '../constants/chains'
 import { useWallet } from '../contexts/WalletContext'
 import { useDexContract } from '../hooks/useDexContract'
 import TokenSelector from '../components/TokenSelector'
+import TestnetBadge from '../components/TestnetBadge'
 
 const Swap: React.FC = () => {
-  const { isConnected, account } = useWallet()
+  const { isConnected, account, chainId } = useWallet()
   const { 
     swapExactTokensForTokens, 
     getAmountsOut, 
@@ -152,12 +154,15 @@ const Swap: React.FC = () => {
       <div className="card p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold">Swap</h2>
-          <button 
-            onClick={() => setShowSettings(true)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <TestnetBadge />
+            <button 
+              onClick={() => setShowSettings(true)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-4">
