@@ -72,7 +72,7 @@ const Pools: React.FC = () => {
   ]
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Liquidity Pools</h1>
         <button 
@@ -111,8 +111,8 @@ const Pools: React.FC = () => {
       {activeTab === 'pools' && (
         <div className="space-y-4">
           {mockPools.map((pool) => (
-            <div key={pool.id} className="card p-6">
-              <div className="flex items-center justify-between">
+            <div key={pool.id} className="card p-4 md:p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
@@ -132,16 +132,16 @@ const Pools: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-8">
-                  <div className="text-right">
+                <div className="flex flex-wrap items-center gap-4 md:gap-8">
+                  <div className="text-left md:text-right">
                     <p className="text-sm text-gray-500 dark:text-gray-400">TVL</p>
                     <p className="font-semibold">{pool.tvl}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left md:text-right">
                     <p className="text-sm text-gray-500 dark:text-gray-400">APR</p>
                     <p className="font-semibold text-green-600 dark:text-green-400">{pool.apr}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left md:text-right">
                     <p className="text-sm text-gray-500 dark:text-gray-400">24h Volume</p>
                     <p className="font-semibold">{pool.volume24h}</p>
                   </div>
@@ -158,7 +158,7 @@ const Pools: React.FC = () => {
       {/* Add Liquidity Modal */}
       {showAddLiquidity && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="card p-6 max-w-md w-full mx-4">
+          <div className="card p-4 md:p-6 max-w-md w-full mx-4">
             <h3 className="text-xl font-bold mb-6">Add Liquidity</h3>
             
             <div className="space-y-4">
@@ -245,8 +245,8 @@ const Pools: React.FC = () => {
       )}
 
       {activeTab === 'positions' && (
-        <div className="card p-12 text-center">
-          <Droplets className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+        <div className="card p-6 md:p-12 text-center">
+          <Droplets className="w-12 h-12 md:w-16 md:h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold mb-2">No liquidity positions</h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
             {isConnected 

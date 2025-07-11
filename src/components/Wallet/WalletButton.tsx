@@ -1,9 +1,11 @@
 import React from 'react'
 import { Wallet, LogOut } from 'lucide-react'
 import { useWallet } from '../../contexts/WalletContext'
+import { isMobileDevice } from '../../utils/device'
 
 const WalletButton: React.FC = () => {
   const { account, isConnected, isConnecting, connectWallet, disconnectWallet } = useWallet()
+  const isMobile = isMobileDevice()
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -26,14 +28,23 @@ const WalletButton: React.FC = () => {
     )
   }
 
+  const handleConnectClick = () => {
+    if (isMobile && !window.ethereum) {
+      // Open deep link to wallet app
+      window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`
+      return
+    }
+    connectWallet()
+  }
+
   return (
     <button
-      onClick={connectWallet}
+      onClick={handleConnectClick}
       disabled={isConnecting}
       className="btn-primary flex items-center space-x-2"
     >
       <Wallet className="w-4 h-4" />
-      <span>{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+      <span>{isConnecting ? 'Connecting...' : isMobile && !window.ethereum ? 'Open in Wallet' : 'Connect Wallet'}</span>
     </button>
   )
 }

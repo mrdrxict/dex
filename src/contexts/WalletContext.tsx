@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
+import { isMobileDevice } from '../utils/device'
 
 // Extend Window interface for TypeScript
 declare global {
@@ -43,14 +44,27 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
 
   const connectWallet = async () => {
     if (typeof window.ethereum === 'undefined') {
-      alert('Please install MetaMask!')
+      if (isMobileDevice()) {
+        // On mobile, provide a deep link to open MetaMask
+        window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`
+      } else {
+        alert('Please install MetaMask!')
+      }
       return
     }
 
     try {
       setIsConnecting(true)
       const provider = new ethers.BrowserProvider(window.ethereum)
-      const accounts = await provider.send('eth_requestAccounts', [])
+      
+      // Request accounts with a timeout for mobile wallets
+      const accounts = await Promise.race([
+        provider.send('eth_requestAccounts', []),
+        new Promise<string[]>((_, reject) => 
+          setTimeout(() => reject(new Error('Connection timeout')), 30000)
+        )
+      ]) as string[]
+      
       const network = await provider.getNetwork()
       
       setProvider(provider)
@@ -60,6 +74,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       // Check if user rejected the connection request
       if (error && typeof error === 'object' && 'code' in error && (error.code === 'ACTION_REJECTED' || error.code === 4001)) {
         console.log('Wallet connection cancelled by user')
+      } else if (error instanceof Error && error.message === 'Connection timeout') {
+        console.log('Wallet connection timed out')
       } else {
         console.error('Failed to connect wallet:', error)
       }
@@ -77,17 +93,80 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const switchChain = async (targetChainId: number) => {
     if (!window.ethereum) return
 
+    const hexChainId = `0x${targetChainId.toString(16)}`
+
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${targetChainId.toString(16)}` }],
+        params: [{ chainId: hexChainId }],
       })
     } catch (error: any) {
       if (error.code === 4902) {
         // Chain not added to wallet
-        console.error('Chain not added to wallet')
+        try {
+          // Get chain info to add
+          const chainInfo = getChainAddParams(targetChainId)
+          if (chainInfo) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [chainInfo],
+            })
+          }
+        } catch (addError) {
+          console.error('Failed to add chain to wallet:', addError)
+        }
       }
     }
+  }
+
+  // Helper function to get chain parameters for adding to wallet
+  const getChainAddParams = (chainId: number) => {
+    const chains: Record<number, any> = {
+      1: {
+        chainId: '0x1',
+        chainName: 'Ethereum Mainnet',
+        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+        rpcUrls: ['https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
+        blockExplorerUrls: ['https://etherscan.io'],
+      },
+      56: {
+        chainId: '0x38',
+        chainName: 'Binance Smart Chain',
+        nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+        rpcUrls: ['https://bsc-dataseed.binance.org'],
+        blockExplorerUrls: ['https://bscscan.com'],
+      },
+      137: {
+        chainId: '0x89',
+        chainName: 'Polygon Mainnet',
+        nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+        rpcUrls: ['https://polygon-rpc.com'],
+        blockExplorerUrls: ['https://polygonscan.com'],
+      },
+      42161: {
+        chainId: '0xa4b1',
+        chainName: 'Arbitrum One',
+        nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+        rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+        blockExplorerUrls: ['https://arbiscan.io'],
+      },
+      43114: {
+        chainId: '0xa86a',
+        chainName: 'Avalanche C-Chain',
+        nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
+        rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+        blockExplorerUrls: ['https://snowtrace.io'],
+      },
+      250: {
+        chainId: '0xfa',
+        chainName: 'Fantom Opera',
+        nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
+        rpcUrls: ['https://rpc.ftm.tools'],
+        blockExplorerUrls: ['https://ftmscan.com'],
+      },
+    }
+    
+    return chains[chainId]
   }
 
   useEffect(() => {
@@ -112,6 +191,29 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         window.ethereum.removeListener('chainChanged', handleChainChanged)
       }
     }
+  }, [])
+
+  // Auto-connect on page load if previously connected
+  useEffect(() => {
+    const autoConnect = async () => {
+      if (window.ethereum && window.localStorage.getItem('walletConnected') === 'true') {
+        try {
+          const provider = new ethers.BrowserProvider(window.ethereum)
+          const accounts = await provider.listAccounts()
+          
+          if (accounts.length > 0) {
+            const network = await provider.getNetwork()
+            setProvider(provider)
+            setAccount(accounts[0].address)
+            setChainId(Number(network.chainId))
+          }
+        } catch (error) {
+          console.error('Auto-connect failed:', error)
+        }
+      }
+    }
+    
+    autoConnect()
   }, [])
 
   return (
