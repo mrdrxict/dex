@@ -15,6 +15,7 @@
  import AdminPanel from './components/AdminPanel'
  
  function App() {
+ }
 +  const [testnetMode, setTestnetMode] = useState(false)
 +
    return (
@@ -40,3 +41,4 @@
                <Route path="/admin/rewards" element={<AdminRewards />} />
                <Route path="/admin" element={<AdminPanel />} />
              </Routes>
+   )
