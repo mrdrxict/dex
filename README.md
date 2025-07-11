@@ -1,6 +1,6 @@
 # DexBridge - Advanced Decentralized Exchange with Cross-Chain Bridge
 
-A comprehensive, **mobile-responsive** decentralized exchange (DEX) ecosystem built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, ESR staking, LP farming, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
+A comprehensive, **fully mobile-optimized** decentralized exchange (DEX) ecosystem built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, ESR staking, LP farming, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
 
 ## 🌟 Core Features
 
@@ -186,22 +186,26 @@ VITE_ESR_RPC_URL=https://testnet.rpc.esrscan.com
 
 DexBridge is fully optimized for mobile devices with:
 
+
 - **Responsive Layout**: Adapts to any screen size from phones to desktops
 - **Touch-Friendly Controls**: Large buttons and inputs for easy interaction on touchscreens
-- **Mobile Navigation**: Collapsible menu for easy navigation on small screens
+- **Mobile Navigation**: Fully functional collapsible menu for seamless navigation on small screens
 - **Wallet Integration**: Seamless connection with mobile wallet apps
 - **Optimized Forms**: Form inputs and modals designed for mobile use
 - **Readable Typography**: Text sizing that works across all devices
 - **Efficient Loading**: Fast loading times even on mobile networks
 - **Compact Views**: Data tables and lists that work well on narrow screens
+- **Adaptive Liquidity Pools**: Pool cards that resize appropriately for mobile screens
+- **Mobile-First Design**: Built with mobile users as a primary consideration
+- **Consistent Experience**: Same functionality available on both desktop and mobile
 
 ## 📱 Usage Guide
 
 ### Getting Started
 
 1. **Connect Your Wallet**
-   - Click "Connect Wallet" in the top right
-   - Select MetaMask or your preferred wallet
+   - Tap "Connect Wallet" in the top right
+   - Select your preferred wallet (works with both mobile and desktop wallets)
    - Approve the connection
 
 2. **Select Network**
@@ -231,7 +235,7 @@ DexBridge is fully optimized for mobile devices with:
 ### Adding Liquidity
 
 1. **Go to Pools tab**
-2. **Click "Add Liquidity"**
+2. **Tap "Add Liquidity"**
 3. **Select Token Pair**
    - Choose two tokens for the pool
    - Enter amounts (system calculates ratios)
@@ -243,7 +247,7 @@ DexBridge is fully optimized for mobile devices with:
 ### Cross-Chain Bridging
 
 1. **Navigate to Bridge tab**
-2. **Configure Transfer**
+2. **Configure Your Transfer**
    - Select source and destination chains
    - Choose token and amount
    - Enter destination address (optional)
@@ -258,7 +262,7 @@ DexBridge is fully optimized for mobile devices with:
 ### ESR Staking
 
 1. **Navigate to Stake tab**
-2. **Stake ESR Tokens**
+2. **Stake Your ESR Tokens**
    - Enter amount (minimum 100 ESR)
    - Approve ESR spending
    - Confirm staking transaction
@@ -274,7 +278,7 @@ DexBridge is fully optimized for mobile devices with:
 ### LP Farming
 
 1. **Navigate to Farm tab**
-2. **Select Farming Pool**
+2. **Select a Farming Pool**
    - Choose LP token pair
    - Review APR and pool details
 3. **Stake LP Tokens**
@@ -318,6 +322,7 @@ DexBridge is fully optimized for mobile devices with:
 ## 🔧 Development & Deployment
 
 ### Local Development
+
 
 1. **Start Hardhat Node**
    ```bash
@@ -531,21 +536,22 @@ Users are responsible for ensuring compliance with local laws and regulations re
 ## 🎯 Roadmap
 
 ### Phase 1 (Current)
-- ✅ Core DEX functionality
-- ✅ Cross-chain bridge
-- ✅ ESR staking system
-- ✅ LP farming platform
-- ✅ Fee collection system
-- ✅ Admin management tools
-- ✅ Mobile responsive design
+- ✅ Core DEX functionality with AMM
+- ✅ Cross-chain bridge with relayer system
+- ✅ ESR staking system with USDT rewards
+- ✅ LP farming platform with multiple pools
+- ✅ Fee collection system ($3 USDT per transaction)
+- ✅ Admin management tools for tokens and relayers
+- ✅ Fully mobile-optimized responsive design
 
 ### Phase 2 (Upcoming)
 - 🔄 Advanced analytics and reporting
-- 🔄 Mobile app development
+- 🔄 Native mobile app development
 - 🔄 Additional chain integrations
 - 🔄 Governance token implementation
 - 🔄 Advanced trading features
 - 🔄 Institutional tools
+- 🔄 Enhanced mobile UX optimizations
 
 ### Phase 3 (Future)
 - 🔄 Cross-chain governance
@@ -554,3 +560,4 @@ Users are responsible for ensuring compliance with local laws and regulations re
 - 🔄 Enterprise partnerships
 - 🔄 Advanced security features
 - 🔄 Global expansion
+- 🔄 Mobile-first feature innovations
