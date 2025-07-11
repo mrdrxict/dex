@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
-import { isMobileDevice } from '../utils/device'
 
 // Extend Window interface for TypeScript
 declare global {
@@ -44,12 +43,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
 
   const connectWallet = async () => {
     if (typeof window.ethereum === 'undefined') {
-      if (isMobileDevice()) {
-        // On mobile, provide a deep link to open MetaMask
-        window.location.href = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`
-      } else {
-        alert('Please install MetaMask!')
-      }
+      alert('Please install MetaMask or use a Web3-enabled browser!')
       return
     }
 
@@ -57,28 +51,19 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setIsConnecting(true)
       const provider = new ethers.BrowserProvider(window.ethereum)
       
-      // Request accounts with a timeout for mobile wallets
-      const accounts = await Promise.race([
-        provider.send('eth_requestAccounts', []),
-        new Promise<string[]>((_, reject) => 
-          setTimeout(() => reject(new Error('Connection timeout')), 30000)
-        )
-      ]) as string[]
+      // Request accounts
+      const accounts = await provider.send('eth_requestAccounts', [])
       
       const network = await provider.getNetwork()
       
       setProvider(provider)
       setAccount(accounts[0])
       setChainId(Number(network.chainId))
+      
+      // Save connection state
+      localStorage.setItem('walletConnected', 'true')
     } catch (error) {
-      // Check if user rejected the connection request
-      if (error && typeof error === 'object' && 'code' in error && (error.code === 'ACTION_REJECTED' || error.code === 4001)) {
-        console.log('Wallet connection cancelled by user')
-      } else if (error instanceof Error && error.message === 'Connection timeout') {
-        console.log('Wallet connection timed out')
-      } else {
-        console.error('Failed to connect wallet:', error)
-      }
+      console.error('Failed to connect wallet:', error)
     } finally {
       setIsConnecting(false)
     }
@@ -88,6 +73,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     setAccount(null)
     setChainId(null)
     setProvider(null)
+    localStorage.removeItem('walletConnected')
   }
 
   const switchChain = async (targetChainId: number) => {
@@ -196,7 +182,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   // Auto-connect on page load if previously connected
   useEffect(() => {
     const autoConnect = async () => {
-      if (window.ethereum && window.localStorage.getItem('walletConnected') === 'true') {
+      if (window.ethereum && localStorage.getItem('walletConnected') === 'true') {
         try {
           const provider = new ethers.BrowserProvider(window.ethereum)
           const accounts = await provider.listAccounts()

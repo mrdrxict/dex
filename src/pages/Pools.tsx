@@ -73,11 +73,11 @@ const Pools: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <h1 className="text-3xl font-bold">Liquidity Pools</h1>
         <button 
           onClick={() => setShowAddLiquidity(true)}
-          className="btn-primary flex items-center space-x-2"
+          className="btn-primary flex items-center space-x-2 self-start"
         >
           <Plus className="w-4 h-4" />
           <span>Add Liquidity</span>
@@ -132,7 +132,7 @@ const Pools: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 md:gap-8">
+                <div className="grid grid-cols-3 sm:flex sm:flex-wrap sm:items-center gap-4 md:gap-8">
                   <div className="text-left md:text-right">
                     <p className="text-sm text-gray-500 dark:text-gray-400">TVL</p>
                     <p className="font-semibold">{pool.tvl}</p>
@@ -145,7 +145,7 @@ const Pools: React.FC = () => {
                     <p className="text-sm text-gray-500 dark:text-gray-400">24h Volume</p>
                     <p className="font-semibold">{pool.volume24h}</p>
                   </div>
-                  <button className="btn-primary">
+                  <button className="btn-primary col-span-3 sm:col-span-1">
                     Add Liquidity
                   </button>
                 </div>
@@ -157,8 +157,8 @@ const Pools: React.FC = () => {
 
       {/* Add Liquidity Modal */}
       {showAddLiquidity && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="card p-4 md:p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="card p-4 md:p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-6">Add Liquidity</h3>
             
             <div className="space-y-4">

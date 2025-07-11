@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ArrowLeftRight, Droplets, Grid as Bridge, BarChart3, Gift, Sprout, Shield, Menu, X } from 'lucide-react'
 import { useWallet } from '../../contexts/WalletContext'
 
 const Navigation: React.FC = () => {
   const { account } = useWallet()
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   
   const navItems = [
     { path: '/', label: 'Swap', icon: ArrowLeftRight },
@@ -19,17 +19,15 @@ const Navigation: React.FC = () => {
   // Mock admin check - replace with actual owner verification
   const isAdmin = account === '0x...' // Replace with actual admin check
 
-  // TODO: Replace with actual contract owner check
-  // const isAdmin = account && account.toLowerCase() === CONTRACT_OWNER_ADDRESS.toLowerCase()
-
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 relative">
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4">
         {/* Mobile menu button */}
         <div className="flex md:hidden items-center justify-between py-4">
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
