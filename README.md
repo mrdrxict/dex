@@ -1,6 +1,6 @@
 # DexBridge - Advanced Decentralized Exchange with Cross-Chain Bridge
 
-A comprehensive, **100% self-contained** decentralized exchange (DEX) ecosystem built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, ESR staking, LP farming, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
+A comprehensive, **mobile-responsive** decentralized exchange (DEX) ecosystem built with React, TypeScript, and custom smart contracts. DexBridge provides seamless token swapping, liquidity provision, cross-chain bridging, ESR staking, LP farming, and comprehensive analytics with **NO external dependencies** on protocols like Uniswap, LayerZero, or Axelar.
 
 ## 🌟 Core Features
 
@@ -51,6 +51,7 @@ A comprehensive, **100% self-contained** decentralized exchange (DEX) ecosystem 
 - **Professional UI**: Dark/light mode with responsive design and micro-interactions
 - **Wallet Integration**: MetaMask and Web3 wallet support with chain switching
 - **ESR Testnet Support**: Full integration with ESR blockchain testnet
+- **Mobile Responsive**: Fully optimized for mobile devices with touch-friendly controls
 
 ## 🚀 Quick Start
 
@@ -180,6 +181,19 @@ VITE_ESR_RPC_URL=https://testnet.rpc.esrscan.com
 #### WETH.sol
 - Wrapped ETH implementation
 - Standard deposit/withdraw functions
+
+## 📱 Mobile Responsiveness
+
+DexBridge is fully optimized for mobile devices with:
+
+- **Responsive Layout**: Adapts to any screen size from phones to desktops
+- **Touch-Friendly Controls**: Large buttons and inputs for easy interaction on touchscreens
+- **Mobile Navigation**: Collapsible menu for easy navigation on small screens
+- **Wallet Integration**: Seamless connection with mobile wallet apps
+- **Optimized Forms**: Form inputs and modals designed for mobile use
+- **Readable Typography**: Text sizing that works across all devices
+- **Efficient Loading**: Fast loading times even on mobile networks
+- **Compact Views**: Data tables and lists that work well on narrow screens
 
 ## 📱 Usage Guide
 
@@ -523,6 +537,7 @@ Users are responsible for ensuring compliance with local laws and regulations re
 - ✅ LP farming platform
 - ✅ Fee collection system
 - ✅ Admin management tools
+- ✅ Mobile responsive design
 
 ### Phase 2 (Upcoming)
 - 🔄 Advanced analytics and reporting
