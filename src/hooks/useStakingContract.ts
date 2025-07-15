@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
-import STAKING_ABI from '../abi/Staking/ESRStaking.json'
-import ERC20_ABI from '../abi/Tokens/DexBridgeToken.json'
+import STAKING_ABI from '../../abi/Staking/ESRStaking.json'
+import ERC20_ABI from '../../abi/Tokens/DexBridgeToken.json'
 
 export const useStakingContract = () => {
   const { provider, chainId, account } = useWallet()

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
-import BRIDGE_ABI from '../abi/Bridge/BridgeCore.json'
+import BRIDGE_ABI from '../../abi/Bridge/BridgeCore.json'
 
 export interface BridgeTransaction {
   txId: string

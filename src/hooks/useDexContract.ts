@@ -4,9 +4,9 @@ import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
 
 // Import ABIs
-import FACTORY_ABI from '../abi/DEX/Factory.json'
-import ROUTER_ABI from '../abi/DEX/Router.json'
-import ERC20_ABI from '../abi/Tokens/DexBridgeToken.json'
+import FACTORY_ABI from '../../abi/DEX/Factory.json'
+import ROUTER_ABI from '../../abi/DEX/Router.json'
+import ERC20_ABI from '../../abi/Tokens/DexBridgeToken.json'
 
 export const useDexContract = () => {
   const { provider, chainId, account } = useWallet()

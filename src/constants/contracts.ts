@@ -124,6 +124,13 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     factory: '0x0000000000000000000000000000000000000000', // Deploy Factory here
     router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
     bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
-    staking:<boltArtifact id="remove-mock-code-implementation" title="Remove Mock Code and Implement Real Functionality">
+    staking: '0x0000000000000000000000000000000000000000', // Deploy Staking here
+    farming: '0x0000000000000000000000000000000000000000', // Deploy Farming here
+    dxbToken: '0x0000000000000000000000000000000000000000', // Deploy DXB Token here
+    weth: '0xf1277d1Ed8AD466beddF92ef448A132661956621'     // Fantom Testnet WFTM
   }
+}
+
+export const getContractAddresses = (chainId: number): ContractAddresses | null => {
+  return CONTRACT_ADDRESSES[chainId] || null
 }
