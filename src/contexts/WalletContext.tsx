@@ -18,6 +18,7 @@ interface WalletContextType {
   connectWallet: () => Promise<void>
   disconnectWallet: () => void
   switchChain: (chainId: number) => Promise<boolean>
+  ensureCorrectChainType: (testnetMode: boolean) => Promise<boolean>
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
@@ -78,7 +79,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   }
 
   const switchChain = async (targetChainId: number): Promise<boolean> => {
-    if (!window.ethereum) return
+    if (!window.ethereum) return false
 
     const chainConfig = CHAIN_CONFIG[targetChainId]
     if (!chainConfig) {
@@ -126,6 +127,35 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }
 
+  // Check if the current chain matches the testnet mode
+  const ensureCorrectChainType = async (testnetMode: boolean): Promise<boolean> => {
+    if (!window.ethereum || !isConnected) return false;
+    
+    try {
+      const currentChainId = chainId;
+      if (!currentChainId) return false;
+      
+      const currentConfig = CHAIN_CONFIG[currentChainId];
+      if (!currentConfig) return false;
+      
+      // If already on the correct chain type, return true
+      if (currentConfig.isTestnet === testnetMode) return true;
+      
+      // Find the first chain of the correct type
+      const targetChains = Object.keys(CHAIN_CONFIG)
+        .filter(id => CHAIN_CONFIG[parseInt(id)].isTestnet === testnetMode)
+        .map(id => parseInt(id));
+      
+      if (targetChains.length === 0) return false;
+      
+      // Switch to the first available chain of the correct type
+      return await switchChain(targetChains[0]);
+    } catch (error) {
+      console.error('Failed to ensure correct chain type:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (window.ethereum) {
       const handleAccountsChanged = (accounts: string[]) => {
@@ -149,35 +179,6 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       }
     }
   }, [])
-
-  // Check if the current chain matches the testnet mode
-  const ensureCorrectChainType = async (testnetMode: boolean) => {
-    if (!window.ethereum || !isConnected) return false;
-    
-    try {
-      const currentChainId = chainId;
-      if (!currentChainId) return false;
-      
-      const currentConfig = CHAIN_CONFIG[currentChainId];
-      if (!currentConfig) return false;
-      
-      // If already on the correct chain type, return true
-      if (currentConfig.isTestnet === testnetMode) return true;
-      
-      // Find the first chain of the correct type
-      const targetChains = Object.keys(CHAIN_CONFIG)
-        .filter(id => CHAIN_CONFIG[id].isTestnet === testnetMode)
-        .map(id => parseInt(id));
-      
-      if (targetChains.length === 0) return false;
-      
-      // Switch to the first available chain of the correct type
-      return await switchChain(targetChains[0]);
-    } catch (error) {
-      console.error('Failed to ensure correct chain type:', error);
-      return false;
-    }
-  };
 
   // Auto-connect on page load if previously connected
   useEffect(() => {
@@ -212,7 +213,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         isConnecting,
         connectWallet,
         disconnectWallet,
-        switchChain, 
+        switchChain,
         ensureCorrectChainType
       }}
     >

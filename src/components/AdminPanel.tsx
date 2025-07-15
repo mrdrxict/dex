@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Shield, Plus, Settings, Users, Gift } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useWallet } from '../contexts/WalletContext'
@@ -9,12 +9,7 @@ const AdminPanel: React.FC = () => {
   const { bridgeContract } = useBridgeContract()
   const [activeTab, setActiveTab] = useState<'tokens' | 'relayers' | 'settings'>('tokens')
   const [isOwner, setIsOwner] = useState(false)
-
-  // Mock admin check - in production, verify against contract owner
-  React.useEffect(() => {
-    // This would check if current account is contract owner
-    setIsOwner(account === '0x...') // Replace with actual owner check
-  }, [account])
+  const [loading, setLoading] = useState(false)
 
   const [newToken, setNewToken] = useState({
     address: '',
@@ -27,12 +22,44 @@ const AdminPanel: React.FC = () => {
 
   const [newRelayer, setNewRelayer] = useState('')
 
+  // Check if current account is contract owner
+  useEffect(() => {
+    const checkOwnership = async () => {
+      if (!bridgeContract || !account) {
+        setIsOwner(false)
+        return
+      }
+
+      try {
+        const owner = await bridgeContract.owner()
+        setIsOwner(owner.toLowerCase() === account.toLowerCase())
+      } catch (error) {
+        console.error('Error checking ownership:', error)
+        setIsOwner(false)
+      }
+    }
+
+    checkOwnership()
+  }, [bridgeContract, account])
+
   const handleAddToken = async () => {
-    if (!bridgeContract) return
+    if (!bridgeContract || !newToken.address || !newToken.chainId) {
+      alert('Please fill in required fields')
+      return
+    }
     
     try {
-      // This would call the contract's addSupportedToken function
-      console.log('Adding token:', newToken)
+      setLoading(true)
+      const tx = await bridgeContract.addSupportedToken(
+        newToken.address,
+        parseInt(newToken.chainId),
+        newToken.isNative,
+        newToken.minAmount || '0',
+        newToken.maxAmount || ethers.parseEther('1000000').toString(),
+        parseInt(newToken.fee) || 250 // 2.5% default
+      )
+      await tx.wait()
+      
       alert('Token added successfully!')
       setNewToken({
         address: '',
@@ -44,21 +71,29 @@ const AdminPanel: React.FC = () => {
       })
     } catch (error) {
       console.error('Failed to add token:', error)
-      alert('Failed to add token')
+      alert('Failed to add token: ' + (error as Error).message)
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleAddRelayer = async () => {
-    if (!bridgeContract || !newRelayer) return
+    if (!bridgeContract || !newRelayer) {
+      alert('Please enter relayer address')
+      return
+    }
     
     try {
+      setLoading(true)
       const tx = await bridgeContract.addRelayer(newRelayer)
       await tx.wait()
       alert('Relayer added successfully!')
       setNewRelayer('')
     } catch (error) {
       console.error('Failed to add relayer:', error)
-      alert('Failed to add relayer')
+      alert('Failed to add relayer: ' + (error as Error).message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -83,7 +118,10 @@ const AdminPanel: React.FC = () => {
           <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <h3 className="text-xl font-semibold mb-2">Access Denied</h3>
           <p className="text-gray-500 dark:text-gray-400">
-            You don't have permission to access the admin panel.
+            You don't have permission to access the admin panel. Only the contract owner can access this area.
+          </p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+            Connected as: {account}
           </p>
         </div>
       </div>
@@ -147,7 +185,7 @@ const AdminPanel: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Token Address
+                Token Address *
               </label>
               <input
                 type="text"
@@ -159,7 +197,7 @@ const AdminPanel: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Chain ID
+                Chain ID *
               </label>
               <input
                 type="number"
@@ -171,7 +209,7 @@ const AdminPanel: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Minimum Amount
+                Minimum Amount (ETH)
               </label>
               <input
                 type="number"
@@ -183,7 +221,7 @@ const AdminPanel: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Maximum Amount
+                Maximum Amount (ETH)
               </label>
               <input
                 type="number"
@@ -195,11 +233,11 @@ const AdminPanel: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Fee (%)
+                Fee (basis points, 100 = 1%)
               </label>
               <input
                 type="number"
-                placeholder="0.3"
+                placeholder="250"
                 value={newToken.fee}
                 onChange={(e) => setNewToken({ ...newToken, fee: e.target.value })}
                 className="input-field"
@@ -220,9 +258,10 @@ const AdminPanel: React.FC = () => {
           </div>
           <button
             onClick={handleAddToken}
+            disabled={loading}
             className="btn-primary mt-6"
           >
-            Add Token
+            {loading ? 'Adding...' : 'Add Token'}
           </button>
         </div>
       )}
@@ -245,9 +284,10 @@ const AdminPanel: React.FC = () => {
                 />
                 <button
                   onClick={handleAddRelayer}
+                  disabled={loading}
                   className="btn-primary"
                 >
-                  Add Relayer
+                  {loading ? 'Adding...' : 'Add Relayer'}
                 </button>
               </div>
             </div>
@@ -261,11 +301,11 @@ const AdminPanel: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Global Bridge Fee (%)
+                Global Bridge Fee (basis points)
               </label>
               <input
                 type="number"
-                placeholder="2.5"
+                placeholder="250"
                 className="input-field"
               />
             </div>

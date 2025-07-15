@@ -2,29 +2,7 @@ import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
-
-const BRIDGE_ABI = [
-  'function owner() external view returns (address)',
-  'function addSupportedToken(address token, uint256 chainId, bool isNative, uint256 minAmount, uint256 maxAmount, uint256 fee) external',
-  'function addRelayer(address relayer) external',
-  'function removeRelayer(address relayer) external',
-  'function setBridgeFee(uint256 fee) external',
-  'function setFeeCollector(address feeCollector) external',
-  'function pause() external',
-  'function unpause() external',
-  'function lockTokens(address token, uint256 amount, uint256 targetChain, address targetAddress) external payable returns (bytes32 txId)',
-  'function releaseTokens(bytes32 txId) external',
-  'function burnAndBridge(address token, uint256 amount, uint256 targetChain, address targetAddress) external returns (bytes32 txId)',
-  'function getTransaction(bytes32 txId) external view returns (tuple(bytes32 txId, address user, address token, uint256 amount, uint256 fee, uint256 sourceChain, uint256 targetChain, address targetAddress, uint256 timestamp, uint8 status))',
-  'function getUserTransactions(address user) external view returns (bytes32[] memory)',
-  'function supportedTokens(address token) external view returns (tuple(address tokenAddress, uint256 chainId, bool isNative, bool isActive, uint256 minAmount, uint256 maxAmount, uint256 fee))',
-  'function bridgeFee() external view returns (uint256)',
-  'event TokenLocked(bytes32 indexed txId, address indexed user, address indexed token, uint256 amount, uint256 targetChain, address targetAddress)',
-  'event TokenReleased(bytes32 indexed txId, address indexed user, address indexed token, uint256 amount)',
-  'event TokenMinted(bytes32 indexed txId, address indexed user, address indexed token, uint256 amount)',
-  'event TokenBurned(bytes32 indexed txId, address indexed user, address indexed token, uint256 amount)',
-  'event BridgeCompleted(bytes32 indexed txId)'
-]
+import BRIDGE_ABI from '../abi/Bridge/BridgeCore.json'
 
 export interface BridgeTransaction {
   txId: string
@@ -115,13 +93,6 @@ export const useBridgeContract = () => {
     return tx.wait()
   }
 
-  const releaseTokens = async (txId: string) => {
-    if (!bridgeContract) throw new Error('Bridge contract not available')
-    
-    const tx = await bridgeContract.releaseTokens(txId)
-    return tx.wait()
-  }
-
   const getTransaction = async (txId: string): Promise<BridgeTransaction> => {
     if (!bridgeContract) throw new Error('Bridge contract not available')
     
@@ -149,33 +120,13 @@ export const useBridgeContract = () => {
     return await bridgeContract.getUserTransactions(address)
   }
 
-  const getBridgeFee = async (): Promise<string> => {
-    if (!bridgeContract) throw new Error('Bridge contract not available')
-    
-    const fee = await bridgeContract.bridgeFee()
-    return (Number(fee) / 100).toString() // Convert basis points to percentage
-  }
-
-  const getSupportedToken = async (tokenAddress: string) => {
-    if (!bridgeContract) throw new Error('Bridge contract not available')
-    
-    const tokenInfo = await bridgeContract.supportedTokens(tokenAddress)
-    return {
-      tokenAddress: tokenInfo.tokenAddress,
-      chainId: Number(tokenInfo.chainId),
-      isNative: tokenInfo.isNative,
-      isActive: tokenInfo.isActive,
-      minAmount: ethers.formatEther(tokenInfo.minAmount),
-      maxAmount: ethers.formatEther(tokenInfo.maxAmount),
-      fee: Number(tokenInfo.fee) / 100 // Convert basis points to percentage
-    }
-  }
-
   const estimateBridgeFee = async (tokenAddress: string, amount: string) => {
+    if (!bridgeContract) throw new Error('Bridge contract not available')
+    
     try {
-      const tokenInfo = await getSupportedToken(tokenAddress)
+      const tokenInfo = await bridgeContract.supportedTokens(tokenAddress)
       const amountBN = ethers.parseEther(amount)
-      const feeBN = (amountBN * BigInt(tokenInfo.fee * 100)) / BigInt(10000)
+      const feeBN = (amountBN * BigInt(tokenInfo.fee)) / BigInt(10000)
       return ethers.formatEther(feeBN)
     } catch (error) {
       console.error('Error estimating bridge fee:', error)
@@ -187,11 +138,8 @@ export const useBridgeContract = () => {
     bridgeContract,
     lockTokens,
     burnAndBridge,
-    releaseTokens,
     getTransaction,
     getUserTransactions,
-    getBridgeFee,
-    getSupportedToken,
     estimateBridgeFee
   }
 }

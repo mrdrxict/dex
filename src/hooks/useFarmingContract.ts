@@ -2,37 +2,8 @@ import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 import { getContractAddresses } from '../constants/contracts'
-
-const FARMING_ABI = [
-  'function addPool(address lpToken, uint256 allocPoint, string memory name, bool withUpdate) external',
-  'function setPool(uint256 pid, uint256 allocPoint, bool withUpdate) external',
-  'function setPoolStatus(uint256 pid, bool isActive) external',
-  'function setEmissionRate(uint256 esrPerSecond) external',
-  'function deposit(uint256 pid, uint256 amount) external',
-  'function withdraw(uint256 pid, uint256 amount) external',
-  'function harvest(uint256 pid) external',
-  'function harvestAll() external',
-  'function pendingESR(uint256 pid, address user) external view returns (uint256)',
-  'function getUserInfo(uint256 pid, address user) external view returns (uint256 amount, uint256 rewardDebt, uint256 stakedAt, uint256 pendingRewards)',
-  'function getPoolInfo(uint256 pid) external view returns (address lpToken, uint256 allocPoint, uint256 lastRewardTime, uint256 accESRPerShare, uint256 totalStaked, bool isActive, string memory name)',
-  'function getAllPools() external view returns (address[] memory lpTokens, uint256[] memory allocPoints, uint256[] memory totalStaked, bool[] memory isActive, string[] memory names)',
-  'function getFarmingStats() external view returns (uint256 totalPools, uint256 totalAllocPoint, uint256 esrPerSecond, uint256 totalValueLocked)',
-  'function poolLength() external view returns (uint256)',
-  'function massUpdatePools() external',
-  'function updatePool(uint256 pid) external',
-  'event Deposit(address indexed user, uint256 indexed pid, uint256 amount)',
-  'event Withdraw(address indexed user, uint256 indexed pid, uint256 amount)',
-  'event Harvest(address indexed user, uint256 indexed pid, uint256 amount)',
-  'event PoolAdded(uint256 indexed pid, address indexed lpToken, uint256 allocPoint)',
-  'event PoolUpdated(uint256 indexed pid, uint256 allocPoint)',
-  'event EmissionRateUpdated(uint256 esrPerSecond)'
-]
-
-const ERC20_ABI = [
-  'function approve(address spender, uint256 amount) external returns (bool)',
-  'function allowance(address owner, address spender) external view returns (uint256)',
-  'function balanceOf(address owner) external view returns (uint256)'
-]
+import FARMING_ABI from '../abi/farming/LPFarming.json'
+import ERC20_ABI from '../abi/Tokens/DexBridgeToken.json'
 
 export const useFarmingContract = () => {
   const { provider, chainId, account } = useWallet()
@@ -133,21 +104,6 @@ export const useFarmingContract = () => {
     }
   }
 
-  const getPoolInfo = async (pid: number) => {
-    if (!farmingContract) throw new Error('Contract not available')
-    
-    const info = await farmingContract.getPoolInfo(pid)
-    return {
-      lpToken: info.lpToken,
-      allocPoint: Number(info.allocPoint),
-      lastRewardTime: Number(info.lastRewardTime),
-      accESRPerShare: ethers.formatEther(info.accESRPerShare),
-      totalStaked: ethers.formatEther(info.totalStaked),
-      isActive: info.isActive,
-      name: info.name
-    }
-  }
-
   const getAllPools = async () => {
     if (!farmingContract) throw new Error('Contract not available')
     
@@ -217,7 +173,6 @@ export const useFarmingContract = () => {
     harvestAll,
     pendingESR,
     getUserInfo,
-    getPoolInfo,
     getAllPools,
     getFarmingStats,
     addPool,
