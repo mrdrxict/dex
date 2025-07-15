@@ -125,3 +125,5 @@ export const CONTRACT_ADDRESSES: Record<number, ContractAddresses> = {
     router: '0x0000000000000000000000000000000000000000',  // Deploy Router here
     bridge: '0x0000000000000000000000000000000000000000',  // Deploy Bridge here
     staking:<boltArtifact id="remove-mock-code-implementation" title="Remove Mock Code and Implement Real Functionality">
+  }
+}
